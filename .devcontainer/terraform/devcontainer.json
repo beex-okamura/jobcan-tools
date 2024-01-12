@@ -1,0 +1,23 @@
+{
+    "name": "terraform",
+
+    "dockerFile": "./Dockerfile",
+
+    "mounts": [
+        {"type": "bind", "source": "${localEnv:HOME}/.aws", "target": "/home/app/.aws"}
+    ],
+
+    "remoteUser": "app",
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "github.copilot",
+                "github.copilot-chat",
+                "github.vscode-github-actions",
+                "github.vscode-pull-request-github",
+                "hashicorp.terraform"
+            ]
+        }
+    }
+}
