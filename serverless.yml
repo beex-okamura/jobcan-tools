@@ -24,7 +24,6 @@ functions:
         - main.handler
       entryPoint:
         - "/lambda-entrypoint.sh"
-    handler: main.handler
     events:
       - http:
           path: /
