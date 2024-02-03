@@ -1,4 +1,6 @@
 deploy:
   bucket-name: jobcan-serverless-deploy-dev
+  ecr-repository:
+    uri: 105785188161.dkr.ecr.ap-northeast-1.amazonaws.com/jobcan-tools-api-dev
 iam-role:
   api: arn:aws:iam::105785188161:role/jobcan-dev-basic-lambda-role

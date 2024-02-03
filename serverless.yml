@@ -10,12 +10,25 @@ provider:
     name: ${file(deployment/serverless.${opt:stage}.yml):deploy.bucket-name}
   timeout: 29
   role: ${file(deployment/serverless.${opt:stage}.yml):iam-role.api}
+  ecr:
+    images:
+      jobcan-tools-api:
+        uri: ${file(deployment/serverless.${opt:stage}.yml):deploy.ecr-repository.uri}
 
 functions:
   api:
-    handler: app/main.handler
+    name: ${self:service}-api-${self:provider.stage}
+    image:
+      name: jobcan-tools-api
+      command:
+        - main.handler
+      entryPoint:
+        - "/lambda-entrypoint.sh"
+    handler: main.handler
     events:
       - http:
           path: /
           method: Any
-          cors: true
+      - http:
+          path: /{path+}
+          method: ANY
