@@ -12,7 +12,7 @@ FROM public.ecr.aws/lambda/python:3.11.2023.11.18.02 as deploy-image
 
 WORKDIR /var/task
 
-COPY --from=requirements-stage /tmp/requirements.txt /code/requirements.txt
+COPY --from=build-image /tmp/requirements.txt /code/requirements.txt
 
 COPY . .
 
