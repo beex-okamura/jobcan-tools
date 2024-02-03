@@ -1,0 +1,4 @@
+deploy:
+  bucket-name:
+iam-role:
+  api: jobcan-dev-basic-lambda-role
