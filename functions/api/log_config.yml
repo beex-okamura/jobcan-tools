@@ -1,0 +1,70 @@
+version: 1
+# フォーマッタ: https://docs.python.org/ja/3/howto/logging.html#formatters
+# ログの出力フォーマット定義
+# asctime: 日時。datefmtでフォーマットを設定する
+# name: 利用しているloggerの名前
+# filename: ログが出力されたファイル名
+# pathname: ログが出力されたファイルパス
+# levelname: ログレベル
+# processName: ログを出力したプロセス
+# message: ログ本文
+formatters:
+  default:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+  access:
+    format: "%(asctime)s [%(name)s] [%(processName)s] [%(levelname)s] %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+  app:
+    format: "%(asctime)s [%(pathname)s:%(lineno)d] [%(name)s] [%(processName)s] [%(levelname)s] %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+# ハンドラ: https://docs.python.org/ja/3/howto/logging.html#handlers
+# ログの出力先やフォーマットを定義する
+handlers:
+  default:
+    class: logging.StreamHandler # ログをハンドルするクラス(他にはlogging.FileHandlerなどがある)
+    level: INFO # ハンドラが処理する最低ログレベル
+    formatter: default # フォーマット
+    stream: ext://sys.stdout # streamの出力先
+  access:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: access
+    stream: ext://sys.stdout
+  app:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: app
+    stream: ext://sys.stdout
+  debug:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: app
+    stream: ext://sys.stdout
+# ロガー: https://docs.python.org/ja/3/howto/logging.html#loggers
+# 複数のハンドラを含み、アプリ内でのロギングで呼び出される設定。
+# アプリ内ではlogging.getLogger()の第一引数としてidを指定することで利用できる
+loggers:
+  uvicorn:
+    handlers: [default] # ログを処理するハンドラ
+    level: INFO # ロガーが処理する最低ログレベル
+  uvicorn.error:
+    handlers: [default]
+    level: INFO
+    propagate: no # 親のloggerからの設定の継承(この場合uvicornが親)
+  uvicorn.access:
+    handlers: [access]
+    level: INFO
+    propagate: no
+  app:
+    level: INFO
+    handlers: [app]
+    propagate: no
+  sqlalchemy.engine:
+    level: ERROR
+    handlers: [app]
+    propagate: no
+  debug:
+    level: DEBUG
+    handlers: [debug]
+    propagate: no
