@@ -1,4 +1,4 @@
 deploy:
   bucket-name: jobcan-serverless-deploy-dev
 iam-role:
-  api: jobcan-dev-basic-lambda-role
+  api: arn:aws:iam::105785188161:role/jobcan-dev-basic-lambda-role
