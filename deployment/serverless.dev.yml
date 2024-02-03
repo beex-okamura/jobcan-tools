@@ -1,4 +1,4 @@
 deploy:
-  bucket-name:
+  bucket-name: jobcan-serverless-deploy-dev
 iam-role:
   api: jobcan-dev-basic-lambda-role
