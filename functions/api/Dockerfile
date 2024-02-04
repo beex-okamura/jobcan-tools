@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:3.11.2023.11.18.02 as build-image
+FROM public.ecr.aws/lambda/python:3.12 as build-image
 
 WORKDIR /tmp
 
@@ -8,7 +8,7 @@ COPY ./pyproject.toml ./poetry.lock* /tmp/
 
 RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-FROM public.ecr.aws/lambda/python:3.11.2023.11.18.02 as deploy-image
+FROM public.ecr.aws/lambda/python:3.12 as deploy-image
 
 WORKDIR /var/task
 
@@ -17,5 +17,7 @@ COPY --from=build-image /tmp/requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 COPY . .
+
+ENTRYPOINT [ "/lambda-entrypoint.sh" ]
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
