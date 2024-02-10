@@ -1,5 +1,5 @@
 
-FROM python:3.12-alpine
+FROM --platform=linux/amd64 python:3.12-alpine
 
 RUN apk update && apk add --no-cache build-base libffi-dev curl bash
 
