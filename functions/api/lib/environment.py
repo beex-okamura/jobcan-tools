@@ -14,6 +14,5 @@ def get_environment() -> Environment:
     """環境変数を取得する。
     """
     return Environment(
-        slack_verification_token=os.environ["SLACK_VERIFICATION_TOKEN"],
         stage=os.environ.get("STAGE", "local")
     )

@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Header, HTTPException
 
-from lib.environment import get_environment
+from lib.secrets import Secrets
 from schemas.slack import SlackActionRequest, SlackActionResponse
 
 router = APIRouter()
-env = get_environment()
-
+secrets = Secrets().get_secrets()
 
 @router.post(
     "/slack/actions",
@@ -15,7 +14,7 @@ def slack_actions(event: SlackActionRequest, x_slack_retry_num: int = Header(0))
     if not event.bot_id or x_slack_retry_num > 0:
         return
 
-    if env.slack_verification_token != event.token:
+    if secrets.slack_verification_token != event.token:
         raise HTTPException(status_code=401, detail="Invalid token")
 
     if event.type == "url_verification":
