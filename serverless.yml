@@ -1,0 +1,33 @@
+service: jobcan-tools
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: python3.11
+  stage: ${opt:stage, "dev"}
+  region: ap-northeast-1
+  deploymentBucket:
+    name: ${file(deployment/serverless.${opt:stage}.yml):deploy.bucket-name}
+  timeout: 29
+  role: ${file(deployment/serverless.${opt:stage}.yml):iam-role.api}
+  ecr:
+    images:
+      jobcan-tools-api:
+        uri: ${file(deployment/serverless.${opt:stage}.yml):deploy.ecr-repository.uri}
+
+functions:
+  api:
+    name: ${self:service}-api-${self:provider.stage}
+    image:
+      name: jobcan-tools-api
+      command:
+        - main.handler
+      entryPoint:
+        - "/lambda-entrypoint.sh"
+    events:
+      - http:
+          path: /
+          method: Any
+      - http:
+          path: /{path+}
+          method: ANY

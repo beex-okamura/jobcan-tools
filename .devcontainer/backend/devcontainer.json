@@ -1,0 +1,37 @@
+{
+    "name": "backend",
+
+    "dockerFile": "../../functions/api/Dockerfile.local",
+
+    "remoteUser": "app",
+
+    "workspaceFolder": "/usr/src/app/functions/api/",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/usr/src/app,type=bind,consistency=cached",
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "charliermarsh.ruff",
+                "github.copilot",
+                "github.copilot-chat",
+                "github.vscode-github-actions",
+                "github.vscode-pull-request-github",
+                "ms-python.mypy-type-checker"
+            ],
+            "settings": {
+                "[python]": {
+                    "editor.codeActionsOnSave": {
+                        "source.fixAll": true,
+                        "source.organizeImports": true
+                    },
+                    "editor.formatOnSave": true
+                }
+            }
+        }
+    },
+    "containerEnv": {
+        "SLACK_VERIFICATION_TOKEN": "aaa"
+    },
+    "forwardPorts": [8000],
+    "postStartCommand": "uvicorn main:app --reload"
+}
