@@ -1,12 +1,16 @@
 {
     "name": "backend",
 
-    "dockerFile": "../../functions/api/Dockerfile.local",
+    // "dockerFile": "../../functions/api/Dockerfile.local",
+    "dockerComposeFile": [
+        "../../functions/api/docker-compose.yml",
+    ],
+    "service": "tools-api",
 
     "remoteUser": "app",
 
     "workspaceFolder": "/usr/src/app/functions/api/",
-    "workspaceMount": "source=${localWorkspaceFolder},target=/usr/src/app,type=bind,consistency=cached",
+    // "workspaceMount": "source=${localWorkspaceFolder},target=/usr/src/app,type=bind,consistency=cached",
 
     "customizations": {
         "vscode": {
@@ -29,9 +33,6 @@
             }
         }
     },
-    "containerEnv": {
-        "SLACK_VERIFICATION_TOKEN": "aaa"
-    },
     "forwardPorts": [8000],
-    "postStartCommand": "uvicorn main:app --reload"
+    "postStartCommand": "uvicorn main:app --reload --log-config log_config.yml"
 }

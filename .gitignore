@@ -119,3 +119,6 @@ dmypy.json
 # Terraform
 .terraform
 .terraform.lock.hcl
+
+# Secrets Files
+**/local-secrets.json
