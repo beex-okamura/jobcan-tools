@@ -63,3 +63,19 @@ resource "aws_iam_policy" "jobcan-scraping-s3-scraping-capture-policy" {
     ]
   })
 }
+
+resource "aws_iam_policy" "jobcan-secerts-manager-policy" {
+  name = "${var.app_name}-${var.env}-secrets-manager-policy"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Effect = "Allow"
+        Resource = aws_secretsmanager_secret.jobcan-secrets.arn
+      }
+    ]
+  })
+}
