@@ -4,3 +4,8 @@ deploy:
     uri: 105785188161.dkr.ecr.ap-northeast-1.amazonaws.com/jobcan-tools-api-dev:${env:SHORT_GIT_HASH}
 iam-role:
   api: arn:aws:iam::105785188161:role/jobcan-dev-basic-lambda-role
+environment:
+  common:
+    STAGE: ${self:provider.stage}
+    SECRETS_KEY_NAME: jobcan-tools
+    PUNCH_WORK_QUEUE_URL: jobcan-dev-punch-work-queue
