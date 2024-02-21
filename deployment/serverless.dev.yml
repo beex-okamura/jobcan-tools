@@ -7,5 +7,5 @@ iam-role:
 environment:
   common:
     STAGE: ${self:provider.stage}
-    SECRETS_KEY_NAME: jobcan-tools
+    SECRETS_KEY_NAME: jobcan-dev-secrets
     PUNCH_WORK_QUEUE_URL: jobcan-dev-punch-work-queue
