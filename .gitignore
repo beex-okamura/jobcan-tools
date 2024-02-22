@@ -122,3 +122,6 @@ dmypy.json
 
 # Secrets Files
 **/local-secrets.json
+
+# Environment Files
+.env
