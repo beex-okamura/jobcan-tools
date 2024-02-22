@@ -1,0 +1,30 @@
+version: '3.2'
+services:
+  tools-api:
+    tty: true
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+      args:
+        NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    environment:
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      AWS_DEFAULT_REGION: ap-northeast-1
+      SECRETS_KEY_NAME: jobcan-tools
+      PUNCH_WORK_QUEUE_URL: jobcan-local-scraping-lambda-queue
+      LOCALSTACK_URL: http://localstack:4566
+    volumes:
+      - .:/usr/src/app/functions/api
+    ports:
+      - 8000:8000
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - 4566:4566
+    environment:
+      - SERVICES=secretsmanager, sqs
+      - DEFAULT_REGION=ap-northeast-1
+    volumes:
+      - ./localstack:/etc/localstack/init/ready.d

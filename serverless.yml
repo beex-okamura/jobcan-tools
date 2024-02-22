@@ -14,6 +14,7 @@ provider:
     images:
       jobcan-tools-api:
         uri: ${file(deployment/serverless.${opt:stage}.yml):deploy.ecr-repository.uri}
+  environment: ${file(deployment/serverless.${opt:stage}.yml):environment.common}
 
 functions:
   api:

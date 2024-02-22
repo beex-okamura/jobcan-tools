@@ -1,24 +1,30 @@
 from fastapi import APIRouter, Header, HTTPException
 
-from lib.environment import get_environment
+from lib.secrets import get_secrets
+from lib.slack import choice_work_message
+from lib.sqs import SQSClient
+from routers.logging import TimedRoute
 from schemas.slack import SlackActionRequest, SlackActionResponse
 
-router = APIRouter()
-env = get_environment()
+router = APIRouter(route_class=TimedRoute)
+secrets = get_secrets()
 
 
 @router.post(
     "/slack/actions",
     response_model=SlackActionResponse | None,
 )
-def slack_actions(event: SlackActionRequest, x_slack_retry_num: int = Header(0)):
-    if not event.bot_id or x_slack_retry_num > 0:
-        return
-
-    if env.slack_verification_token != event.token:
+def slack_actions(request: SlackActionRequest, x_slack_retry_num: int = Header(0)):
+    if secrets.SLACK_VERIFICATION_TOKEN != request.token:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-    if event.type == "url_verification":
-        return {"challenge": event.challenge}
+    if request.type == "url_verification":
+        return {"challenge": request.challenge}
 
-    print(event)
+    if request.bot_id or x_slack_retry_num > 0:
+        return
+
+    event = request.event
+    choice_work_message(event.text)
+
+    SQSClient().send_punch_clock_message(event.user)

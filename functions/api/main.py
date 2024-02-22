@@ -5,7 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 
 from lib.environment import get_environment
-from middleware.request import LoggingMiddleware
 from routers.slack import router as slack_actions
 
 env = get_environment()
@@ -20,8 +19,6 @@ app = (
     )
 )
 allow_origins = ["*"]
-
-app.add_middleware(LoggingMiddleware)
 
 # CORS: https://fastapi.tiangolo.com/tutorial/cors/
 app.add_middleware(
