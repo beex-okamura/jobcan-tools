@@ -8,4 +8,4 @@ environment:
   common:
     STAGE: ${self:provider.stage}
     SECRETS_KEY_NAME: jobcan-dev-secrets
-    PUNCH_WORK_QUEUE_URL: arn:aws:sqs:${self:provider.region}:${aws:accountId}:jobcan-dev-punch-work-queue
+    PUNCH_WORK_QUEUE_URL: jobcan-dev-scraping-lambda-queue
