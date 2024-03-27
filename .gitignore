@@ -49,6 +49,11 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+coverage
+
+# TypeScript
+dict
+.pnpm-store
 
 # Translations
 *.mo

@@ -1,0 +1,12 @@
+version: '3.2'
+services:
+  scraping-lambda:
+    tty: true
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    volumes:
+      - .:/usr/src/app/functions/scraping-lambda/
+    env_file:
+      - .env

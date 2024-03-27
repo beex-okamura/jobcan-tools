@@ -2,9 +2,7 @@
     "name": "backend",
 
     // "dockerFile": "../../functions/api/Dockerfile.local",
-    "dockerComposeFile": [
-        "../../functions/api/docker-compose.yml",
-    ],
+    "dockerComposeFile": ["../../functions/api/docker-compose.yml"],
     "service": "tools-api",
 
     "remoteUser": "app",

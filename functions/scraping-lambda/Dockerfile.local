@@ -1,0 +1,16 @@
+ARG FUNCTION_TASK_ROOT="/usr/src/app"
+FROM node:20-bullseye AS build-image
+ARG FUNCTION_TASK_ROOT
+
+ENV HEADLESS_MODE=true
+ENV PLAYWRIGHT_BROWSERS_PATH="/browser"
+
+RUN mkdir -p /browser
+
+RUN npm install -g pnpm playwright
+
+RUN playwright install chromium
+RUN playwright install-deps chromium
+
+COPY package.json pnpm-lock.yaml ${FUNCTION_TASK_ROOT}
+RUN pnpm install
