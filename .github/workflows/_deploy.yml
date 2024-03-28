@@ -9,7 +9,7 @@ on:
         description: デプロイ環境名
         required: true
         type: string
-      sha_short:
+      sha-hash:
         description: Gitの短縮ハッシュ
         required: true
         type: string
@@ -31,6 +31,6 @@ jobs:
           npm install serverless
       - name: Deploy Serverless framework
         env:
-          SHORT_GIT_HASH: ${{ inputs.sha_short }}
+          SHORT_GIT_HASH: ${{ inputs.sha-hash }}
         run: |
           npx sls deploy --stage ${{ inputs.stage }}

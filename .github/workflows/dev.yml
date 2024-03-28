@@ -35,8 +35,9 @@ jobs:
       role-to-assume: arn:aws:iam::105785188161:role/oidc-github-actions-role
       func-dir: functions/scraping-lambda
   deploy:
-    needs: [apply, build-api]
+    needs: [create_hash, build-api, build-scraping]
     uses: ./.github/workflows/_deploy.yml
     with:
       stage: dev
+      sha-hash: ${{ needs.create_hash.outputs.sha_short }}
       role-to-assume: arn:aws:iam::105785188161:role/oidc-github-actions-role
