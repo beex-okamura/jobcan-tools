@@ -11,3 +11,10 @@ resource "aws_ecr_repository" "jobcan-tools-api-repo" {
     scan_on_push = true
   }
 }
+
+resource "aws_ecr_repository" "jobcan-tools-scraping-repo" {
+  name = "${var.app_name}-tools-scraping-${var.env}"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}

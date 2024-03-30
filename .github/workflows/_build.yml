@@ -17,6 +17,10 @@ on:
         description: デプロイする関数のディレクトリ
         required: true
         type: string
+      ecr-repository-name:
+        description: ECRのリポジトリ名
+        required: true
+        type: string
 jobs:
   build:
     permissions:
