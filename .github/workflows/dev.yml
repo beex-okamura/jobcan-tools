@@ -26,6 +26,7 @@ jobs:
       sha-hash: ${{ needs.create-hash.outputs.sha_short }}
       role-to-assume: arn:aws:iam::105785188161:role/oidc-github-actions-role
       func-dir: functions/api
+      ecr-repository-name: jobcan-tools-api-dev
   build-scraping:
     needs: create-hash
     uses: ./.github/workflows/_build.yml
@@ -34,6 +35,7 @@ jobs:
       sha-hash: ${{ needs.create-hash.outputs.sha_short }}
       role-to-assume: arn:aws:iam::105785188161:role/oidc-github-actions-role
       func-dir: functions/scraping-lambda
+      ecr-repository-name: jobcan-tools-scraping-dev
   deploy:
     needs: [create-hash, build-api, build-scraping]
     uses: ./.github/workflows/_deploy.yml

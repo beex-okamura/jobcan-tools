@@ -44,7 +44,7 @@ jobs:
           SHORT_GIT_HASH: ${{ inputs.sha-hash }}
         run: |
           cd ${{ inputs.func-dir }}
-          ECR_REPOSITORY_NAME=jobcan-tools-api-${{ inputs.stage }}
+          ECR_REPOSITORY_NAME=${{ inputs.ecr-repository-name }}
           ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY_NAME
           docker build -t $ECR_REPOSITORY:$SHORT_GIT_HASH -f Dockerfile .
           docker push $ECR_REPOSITORY:$SHORT_GIT_HASH
