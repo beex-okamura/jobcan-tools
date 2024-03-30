@@ -52,8 +52,8 @@ RUN curl -Lo aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-
 
 RUN cp aws-lambda-rie /usr/local/bin/aws-lambda-rie
 
-COPY ./entry_script.sh /entry_script.sh
-RUN chmod +x /entry_script.sh
+COPY ./lambda-entrypoint.sh /lambda-entrypoint.sh
+RUN chmod +x /lambda-entrypoint.sh
 
-ENTRYPOINT [ "/entry_script.sh" ]
+ENTRYPOINT [ "/lambda-entrypoint.sh" ]
 CMD [ "dict/handlers/handlers.handler"]
