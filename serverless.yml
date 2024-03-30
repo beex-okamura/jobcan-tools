@@ -42,3 +42,4 @@ functions:
         - dict/handlers/handlers.handler
       entryPoint:
         - "/lambda-entrypoint.sh"
+    environment: ${file(deployment/serverless.${opt:stage}.yml):environment.scraping}
