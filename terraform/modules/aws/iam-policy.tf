@@ -92,7 +92,7 @@ resource "aws_iam_policy" "jobcan-kms-policy" {
           "kms:GenerateDataKey"
         ]
         Effect = "Allow"
-        Resource = aws_kms_key.jobcan-kms-key.arn
+        Resource = aws_kms_key.kms_custmer_key.arn
       }
     ]
   })
