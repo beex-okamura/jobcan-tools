@@ -79,3 +79,21 @@ resource "aws_iam_policy" "jobcan-secerts-manager-policy" {
     ]
   })
 }
+
+resource "aws_iam_policy" "jobcan-kms-policy" {
+  name = "${var.app_name}-${var.env}-kms-policy"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey"
+        ]
+        Effect = "Allow"
+        Resource = aws_kms_key.kms_custmer_key.arn
+      }
+    ]
+  })
+}

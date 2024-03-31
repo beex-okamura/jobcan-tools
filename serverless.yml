@@ -13,7 +13,9 @@ provider:
   ecr:
     images:
       jobcan-tools-api:
-        uri: ${file(deployment/serverless.${opt:stage}.yml):deploy.ecr-repository.uri}
+        uri: ${file(deployment/serverless.${opt:stage}.yml):deploy.ecr-repository.api.uri}
+      jobcan-tools-scraping:
+        uri: ${file(deployment/serverless.${opt:stage}.yml):deploy.ecr-repository.scraping.uri}
   environment: ${file(deployment/serverless.${opt:stage}.yml):environment.common}
 
 functions:
@@ -32,3 +34,12 @@ functions:
       - http:
           path: /{path+}
           method: ANY
+  scraping:
+    name: ${self:service}-scraping-${self:provider.stage}
+    image:
+      name: jobcan-tools-scraping
+      command:
+        - dict/handlers/handlers.handler
+      entryPoint:
+        - "/lambda-entrypoint.sh"
+    environment: ${file(deployment/serverless.${opt:stage}.yml):environment.scraping}

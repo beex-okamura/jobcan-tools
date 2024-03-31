@@ -1,11 +1,18 @@
 deploy:
   bucket-name: jobcan-serverless-deploy-dev
   ecr-repository:
-    uri: 105785188161.dkr.ecr.ap-northeast-1.amazonaws.com/jobcan-tools-api-dev:${env:SHORT_GIT_HASH}
+    api:
+      uri: 105785188161.dkr.ecr.ap-northeast-1.amazonaws.com/jobcan-tools-api-dev:${env:SHORT_GIT_HASH}
+    scraping:
+      uri: 105785188161.dkr.ecr.ap-northeast-1.amazonaws.com/jobcan-tools-scraping-dev:${env:SHORT_GIT_HASH}
 iam-role:
-  api: arn:aws:iam::105785188161:role/jobcan-dev-basic-lambda-role
+  api: arn:aws:iam::105785188161:role/jobcan-dev-scraping-lambda-role
 environment:
   common:
     STAGE: ${self:provider.stage}
     SECRETS_KEY_NAME: jobcan-dev-secrets
     PUNCH_WORK_QUEUE_URL: jobcan-dev-scraping-lambda-queue
+    DRY_RUN: true
+  scraping:
+    KMS_CUSTOMER_KEY_ARN: arn:aws:kms:ap-northeast-1:105785188161:key/9f99a548-b1a4-402b-8e2d-07c91d5b46eb
+    KMS_CUSTOMER_ALIAS_KEY_ARN: arn:aws:kms:ap-northeast-1:105785188161:alias/jobcan-customer-key-dev
