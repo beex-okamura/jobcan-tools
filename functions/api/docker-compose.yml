@@ -21,10 +21,11 @@ services:
       - 8000:8000
   localstack:
     image: localstack/localstack:latest
+    platform: linux/amd64
     ports:
       - 4566:4566
     environment:
-      - SERVICES=secretsmanager, sqs
+      - SERVICES=secretsmanager, sqs, dynamodb
       - DEFAULT_REGION=ap-northeast-1
     volumes:
       - ./localstack:/etc/localstack/init/ready.d

@@ -21,6 +21,7 @@
                 "ms-python.mypy-type-checker"
             ],
             "settings": {
+                "extensions.verifySignature": false,
                 "[python]": {
                     "editor.codeActionsOnSave": {
                         "source.fixAll": "always",

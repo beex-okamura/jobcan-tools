@@ -5,6 +5,7 @@ from lib.slack import choice_work_message
 from lib.sqs import SQSClient
 from routers.logging import TimedRoute
 from schemas.slack import SlackActionRequest, SlackActionResponse
+from services.users import Users
 
 router = APIRouter(route_class=TimedRoute)
 secrets = get_secrets()
@@ -27,4 +28,6 @@ def slack_actions(request: SlackActionRequest, x_slack_retry_num: int = Header(0
     event = request.event
     choice_work_message(event.text)
 
-    SQSClient().send_punch_clock_message(event.user)
+    user_info = Users.get_user(event.user)
+
+    SQSClient().send_punch_clock_message(user_info)
