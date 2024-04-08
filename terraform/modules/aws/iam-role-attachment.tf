@@ -13,6 +13,16 @@ resource "aws_iam_role_policy_attachment" "jobcan-scraping-lambda" {
   policy_arn = aws_iam_policy.jobcan-lambda-setup.arn
 }
 
+resource "aws_iam_role_policy_attachment" "jobcan-api-lambda" {
+  role = aws_iam_role.jobcan-api-lambda.name
+  policy_arn = aws_iam_policy.jobcan-lambda-setup.arn
+}
+
+resource "aws_iam_role_policy_attachment" "jobcan-api-user-atttributes" {
+  role = aws_iam_role.jobcan-api-lambda.name
+  policy_arn = aws_iam_policy.jobcan-api-read-user-atttributes-policy.arn  
+}
+
 resource "aws_iam_role_policy_attachment" "jobcan-scraping-secrets-lambda" {
   role       = aws_iam_role.jobcan-scraping-lambda.name
   policy_arn = aws_iam_policy.jobcan-secerts-manager-policy.arn

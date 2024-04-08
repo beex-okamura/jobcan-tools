@@ -97,3 +97,19 @@ resource "aws_iam_policy" "jobcan-kms-policy" {
     ]
   })
 }
+
+resource "aws_iam_policy" "jobcan-api-read-user-atttributes-policy" {
+  name = "${var.app_name}-${var.env}-api-user-atttributes-policy"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "dynamodb:GetItem",
+        ]
+        Effect = "Allow"
+        Resource = aws_dynamodb_table.jobcan_user_atttributes.arn
+      }
+    ]
+  })  
+}

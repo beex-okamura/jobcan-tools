@@ -27,6 +27,7 @@ functions:
         - main.handler
       entryPoint:
         - "/lambda-entrypoint.sh"
+    role: ${file(deployment/serverless.${opt:stage}.yml):iam-role.api}
     events:
       - http:
           path: /
@@ -42,4 +43,5 @@ functions:
         - dict/handlers/handlers.handler
       entryPoint:
         - "/lambda-entrypoint.sh"
+    role: ${file(deployment/serverless.${opt:stage}.yml):iam-role.scraping}
     environment: ${file(deployment/serverless.${opt:stage}.yml):environment.scraping}
