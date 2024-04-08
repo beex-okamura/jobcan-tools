@@ -18,9 +18,9 @@ resource "aws_iam_role_policy_attachment" "jobcan-api-lambda" {
   policy_arn = aws_iam_policy.jobcan-lambda-setup.arn
 }
 
-resource "aws_iam_role_policy_attachment" "jobcan-api-user-atttributes" {
+resource "aws_iam_role_policy_attachment" "jobcan-api-user-attributes" {
   role = aws_iam_role.jobcan-api-lambda.name
-  policy_arn = aws_iam_policy.jobcan-api-read-user-atttributes-policy.arn  
+  policy_arn = aws_iam_policy.jobcan-api-read-user-attributes-policy.arn  
 }
 
 resource "aws_iam_role_policy_attachment" "jobcan-api-secrets" {
