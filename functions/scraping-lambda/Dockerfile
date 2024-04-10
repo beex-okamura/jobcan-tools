@@ -37,9 +37,7 @@ ENV PLAYWRIGHT_BROWSERS_PATH="/browser"
 
 RUN mkdir -p /browser
 
-RUN npm install -g pnpm playwright
-RUN playwright install chromium
-RUN playwright install-deps chromium
+RUN npm install -g pnpm
 
 WORKDIR ${FUNCTION_TASK_ROOT}
 
@@ -47,10 +45,11 @@ COPY --from=build-image ${FUNCTION_TASK_ROOT} ./
 
 RUN pnpm install --prod
 
-RUN curl -Lo aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie-arm64 \
-        && chmod +x aws-lambda-rie
+RUN npx playwright install chromium
+RUN npx playwright install-deps chromium
 
-RUN cp aws-lambda-rie /usr/local/bin/aws-lambda-rie
+RUN curl -Lo /usr/local/bin/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/download/v1.17/aws-lambda-rie-arm64 \
+        && chmod +x /usr/local/bin/aws-lambda-rie
 
 COPY ./lambda-entrypoint.sh /lambda-entrypoint.sh
 RUN chmod +x /lambda-entrypoint.sh
