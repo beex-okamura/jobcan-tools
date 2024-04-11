@@ -5,8 +5,12 @@ deploy:
       uri: 105785188161.dkr.ecr.ap-northeast-1.amazonaws.com/jobcan-tools-api-dev:${env:SHORT_GIT_HASH}
     scraping:
       uri: 105785188161.dkr.ecr.ap-northeast-1.amazonaws.com/jobcan-tools-scraping-dev:${env:SHORT_GIT_HASH}
+  sqs:
+    punch-work-queue:
+      arn: arn:aws:sqs:ap-northeast-1:105785188161:jobcan-dev-scraping-lambda-queue
 iam-role:
-  api: arn:aws:iam::105785188161:role/jobcan-dev-scraping-lambda-role
+  api: arn:aws:iam::105785188161:role/jobcan-dev-api-lambda-role
+  scraping: arn:aws:iam::105785188161:role/jobcan-dev-scraping-lambda-role
 environment:
   common:
     STAGE: ${self:provider.stage}

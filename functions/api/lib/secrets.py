@@ -7,7 +7,7 @@ env = get_environment()
 
 class SecretsValues(BaseModel):
     SLACK_VERIFICATION_TOKEN: str
-    SLACK_SEND_TOKEN: str
+    SLACK_BOT_USER_TOKEN: str
 
 def get_secrets():
     return SecretsValues.model_validate_json(

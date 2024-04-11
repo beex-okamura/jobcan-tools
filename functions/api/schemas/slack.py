@@ -39,5 +39,10 @@ class SlackActionRequest(BaseModel):
     event_time: float | None = None
 
 
+class SlackSendMessageRequest(BaseModel):
+    token: str
+    channel: str
+    text: str
+
 class SlackActionResponse(BaseModel):
     challenge: str | None

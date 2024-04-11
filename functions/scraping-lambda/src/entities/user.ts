@@ -1,4 +1,4 @@
 export type UserInfo = {
-	userId: string;
-	password: string;
+	jobcan_user_id: string;
+	jobcan_password: string;
 };

@@ -17,7 +17,7 @@ export const handler = async (event: SQSEvent) => {
 
 	try {
 		for (const message of messages) {
-			const {userId, password} = message;
+			const {jobcan_user_id: userId, jobcan_password: password} = message;
 
 			// eslint-disable-next-line no-await-in-loop
 			await workPunch(browser, userId, password);

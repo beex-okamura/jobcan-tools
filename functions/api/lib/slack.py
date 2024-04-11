@@ -9,11 +9,18 @@ clock_out_match = re.compile("^(退勤|:remote-taisya:|wt|taisya).*")
 go_out_match = re.compile("^(外出|:gaisyutsu:|go|gaisyutsu).*")
 returned_match = re.compile("^(再入|:sainyu:|gr|sainyu).*")
 
+work_message_type = {
+    "clock_in": "出勤",
+    "clock_out": "退勤",
+    "go_out": "外出",
+    "returned": "再入",
+}
+
 secrets = get_secrets()
 
 class Slack:
     def __init__(self) -> None:
-        self.slack = WebClient(token=secrets.SLACK_SEND_TOKEN)
+        self.slack = WebClient(token=secrets.SLACK_BOT_USER_TOKEN)
 
     def send_message(self, channel: str, message: str):
         self.slack.chat_postMessage(channel=channel, text=message)

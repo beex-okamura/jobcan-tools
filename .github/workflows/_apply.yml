@@ -22,9 +22,9 @@ jobs:
             - name: checkout
               uses: actions/checkout@v4
             - name: Setup terraform
-              uses: hashicorp/setup-terraform@v2
+              uses: hashicorp/setup-terraform@v3
             - name: Configure AWS Credentials
-              uses: aws-actions/configure-aws-credentials@v3
+              uses: aws-actions/configure-aws-credentials@v4
               with:
                 role-to-assume: ${{ inputs.role-to-assume }}
                 aws-region: ap-northeast-1
