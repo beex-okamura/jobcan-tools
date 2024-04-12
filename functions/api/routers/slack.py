@@ -34,7 +34,10 @@ def slack_actions(request: SlackActionRequest, x_slack_retry_num: int = Header(0
 
     slack_client.send_message(event.channel, f'{work_type_name} 処理を受けつけました')
 
-    SQSClient().send_punch_clock_message(user_info)
+    SQSClient().send_punch_clock_message({
+        **user_info,
+        'channel': event.channel,
+    })
 
 @router.post(
     "/slack/message",

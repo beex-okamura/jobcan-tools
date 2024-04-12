@@ -4,14 +4,14 @@ import {getBrowser} from '../lib/browser.ts';
 
 import {JobCanClient} from '../playwright/jobcan.ts';
 import {type Browser} from 'playwright';
-import {type UserInfo} from '../entities/user.ts';
+import { ScrapingPayload } from '../entities/jobcan.ts';
 import { decryptPassword } from '../lib/kms.ts';
 import { sendSlackNotification } from '../slack/notification.ts';
 
 const dryRun = process.env.DRY_RUN === 'true';
 
 export const handler = async (event: SQSEvent) => {
-	const messages = event.Records.map(e => JSON.parse(e.body) as UserInfo);
+	const messages = event.Records.map(e => JSON.parse(e.body) as ScrapingPayload);
 
 	logger.info('start jobcan scraping');
 
@@ -19,14 +19,14 @@ export const handler = async (event: SQSEvent) => {
 
 	try {
 		for (const message of messages) {
-			const {jobcan_user_id: userId, jobcan_password: password} = message;
+			const {jobcan_user_id: userId, jobcan_password: password, channel} = message;
 
-			await sendSlackNotification('JOBCAN 勤怠連携処理を開始します')
+			await sendSlackNotification(channel, 'JOBCAN 勤怠連携処理を開始します')
 
 			// eslint-disable-next-line no-await-in-loop
 			await workPunch(browser, userId, password);
 
-			await sendSlackNotification('JOBCAN 勤怠連携処理を終了します')
+			await sendSlackNotification(channel, 'JOBCAN 勤怠連携処理を終了します')
 		}
 	} finally {
 		await browser.close();
