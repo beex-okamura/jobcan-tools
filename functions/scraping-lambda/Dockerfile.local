@@ -1,16 +1,31 @@
 ARG FUNCTION_TASK_ROOT="/usr/src/app"
+
 FROM node:20-bullseye AS build-image
 ARG FUNCTION_TASK_ROOT
 
 ENV HEADLESS_MODE=true
 ENV PLAYWRIGHT_BROWSERS_PATH="/browser"
 
+# Install aws-lambda-cpp build dependencies
+RUN apt-get update && \
+    apt-get install -y \
+    g++ \
+    make \
+    cmake \
+    unzip \
+    autoconf \
+    libtool \
+    libcurl4-openssl-dev
+
 RUN mkdir -p /browser
 
-RUN npm install -g pnpm playwright
+RUN npm install -g pnpm
 
-RUN playwright install chromium
-RUN playwright install-deps chromium
+WORKDIR ${FUNCTION_TASK_ROOT}
 
-COPY package.json pnpm-lock.yaml ${FUNCTION_TASK_ROOT}
+COPY package.json pnpm-lock.yaml ./
+
+RUN npx playwright install chromium
+RUN npx playwright install-deps chromium
+
 RUN pnpm install
