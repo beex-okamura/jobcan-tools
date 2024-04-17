@@ -1,21 +1,23 @@
 from enum import Enum
 from pydantic import BaseModel
 
+
 class ActionTypeEnum(str, Enum):
-    url_verification = 'url_verification'
-    rich_text_section = 'rich_text_section'
-    message = 'message'
-    event_callback = 'event_callback'
+    url_verification = "url_verification"
+    rich_text_section = "rich_text_section"
+    message = "message"
+    event_callback = "event_callback"
 
 
 class ActionEventTypeEnum(str, Enum):
-    message = 'message'
+    message = "message"
 
 
 class SlackActionEvent(BaseModel):
     client_msg_id: str | None = None
     type: ActionEventTypeEnum
     user: str
+    bot_id: str | None = None
     text: str
     ts: str
     blocks: list[dict] | None = None
@@ -43,6 +45,7 @@ class SlackSendMessageRequest(BaseModel):
     token: str
     channel: str
     text: str
+
 
 class SlackActionResponse(BaseModel):
     challenge: str | None
