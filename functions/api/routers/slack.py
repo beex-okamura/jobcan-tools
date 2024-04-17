@@ -32,6 +32,10 @@ def slack_actions(request: SlackActionRequest, x_slack_retry_num: int = Header(0
         return
 
     event = request.event
+
+    if event.bot_id is not None:
+        return
+
     choice_work_type = choice_work_message(event.text)
     work_type_name = work_message_type[choice_work_type]
 
@@ -42,7 +46,7 @@ def slack_actions(request: SlackActionRequest, x_slack_retry_num: int = Header(0
     sqs_payload: ScrapingPayload = ScrapingPayload.model_validate(
         {
             **user_info.model_dump(),
-            "chennel": event.channel,
+            "channel": event.channel,
         }
     )
 

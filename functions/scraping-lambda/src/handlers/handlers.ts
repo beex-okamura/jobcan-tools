@@ -1,51 +1,59 @@
-import {type SQSEvent} from 'aws-lambda';
-import logger from '../lib/logger.ts';
-import {getBrowser} from '../lib/browser.ts';
+import { type SQSEvent } from "aws-lambda";
+import logger from "../lib/logger.ts";
+import { getBrowser } from "../lib/browser.ts";
 
-import {JobCanClient} from '../playwright/jobcan.ts';
-import {type Browser} from 'playwright';
-import { ScrapingPayload } from '../entities/jobcan.ts';
-import { decryptPassword } from '../lib/kms.ts';
-import { sendSlackNotification } from '../slack/notification.ts';
+import { JobCanClient } from "../playwright/jobcan.ts";
+import { type Browser } from "playwright";
+import { ScrapingPayload } from "../entities/jobcan.ts";
+import { decryptPassword } from "../lib/kms.ts";
+import { sendSlackNotification } from "../slack/notification.ts";
 
-const dryRun = process.env.DRY_RUN === 'true';
+const dryRun = process.env.DRY_RUN === "true";
 
 export const handler = async (event: SQSEvent) => {
-	const messages = event.Records.map(e => JSON.parse(e.body) as ScrapingPayload);
+  const messages = event.Records.map(
+    (e) => JSON.parse(e.body) as ScrapingPayload,
+  );
 
-	logger.info('start jobcan scraping');
+  logger.info("start jobcan scraping");
 
-	const browser = await getBrowser();
+  const browser = await getBrowser();
 
-	try {
-		for (const message of messages) {
-			const {jobcan_user_id: userId, jobcan_password: password, channel} = message;
+  try {
+    for (const message of messages) {
+      const {
+        jobcan_user_id: userId,
+        jobcan_password: password,
+        channel,
+      } = message;
 
-			await sendSlackNotification(channel, 'JOBCAN 勤怠連携処理を開始します')
+      await sendSlackNotification(channel, "JOBCAN 勤怠連携処理を開始します");
 
-			// eslint-disable-next-line no-await-in-loop
-			await workPunch(browser, userId, password);
+      // eslint-disable-next-line no-await-in-loop
+      await workPunch(browser, userId, password);
 
-			await sendSlackNotification(channel, 'JOBCAN 勤怠連携処理を終了します')
-		}
-	} finally {
-		await browser.close();
-	}
+      await sendSlackNotification(channel, "JOBCAN 勤怠連携処理を終了します");
+    }
+  } finally {
+    await browser.close();
+  }
 
-	logger.info('end jobcan scraping');
+  logger.info("end jobcan scraping");
 };
 
-export const workPunch = async (browser: Browser, userId: string, password: string) => {
-	
+export const workPunch = async (
+  browser: Browser,
+  userId: string,
+  password: string,
+) => {
+  const page = await browser.newPage();
 
-	const page = await browser.newPage();
+  const plaintext = await decryptPassword(password);
 
-	const plaintext = await decryptPassword(password)
+  const jobcan = new JobCanClient(page);
+  await jobcan.login(userId, plaintext.toString());
 
-	const jobcan = new JobCanClient(page);
-	await jobcan.login(userId, plaintext.toString());
-
-	if (dryRun) return;
-	const res = await jobcan.workPunch();
-	logger.info(res);
+  if (dryRun) return;
+  const res = await jobcan.workPunch();
+  logger.info(res);
 };
