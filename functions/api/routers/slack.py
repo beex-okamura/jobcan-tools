@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Header, HTTPException
 
 from lib.secrets import get_secrets
-from lib.slack import Slack, choice_work_message, work_message_type
+from lib.slack import Slack, choice_work_message, work_message_attribute
 from lib.sqs import SQSClient
 from routers.logging import TimedRoute
 from schemas.scraping_payload import ScrapingPayload
@@ -37,7 +37,7 @@ def slack_actions(request: SlackActionRequest, x_slack_retry_num: int = Header(0
         return
 
     choice_work_type = choice_work_message(event.text)
-    work_type_name = work_message_type[choice_work_type]
+    work_type_name = work_message_attribute[choice_work_type]["name"]
 
     user_info = Users.get_user(event.user)
 
@@ -51,6 +51,13 @@ def slack_actions(request: SlackActionRequest, x_slack_retry_num: int = Header(0
     )
 
     SQSClient().send_punch_clock_message(sqs_payload)
+
+    if user_info.send_punch_channel and len(user_info.send_punch_channel) > 0:
+        user_slack = Slack(token=user_info.slack_acess_token)
+        for channel in user_info.send_punch_channel:
+            user_slack.send_message(
+                channel, work_message_attribute[choice_work_type]["icon"]
+            )
 
 
 @router.post(
