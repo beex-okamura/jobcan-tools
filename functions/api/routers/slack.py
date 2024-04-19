@@ -52,9 +52,9 @@ def slack_actions(request: SlackActionRequest, x_slack_retry_num: int = Header(0
 
     SQSClient().send_punch_clock_message(sqs_payload)
 
-    if user_info.send_punch_channel and len(user_info.send_punch_channel) > 0:
+    if user_info.send_punch_channels and len(user_info.send_punch_channels) > 0:
         user_slack = Slack(token=user_info.slack_acess_token)
-        for channel in user_info.send_punch_channel:
+        for channel in user_info.send_punch_channels:
             user_slack.send_message(
                 channel, work_message_attribute[choice_work_type]["icon"]
             )

@@ -17,5 +17,5 @@ class UserModel(Model):
     jobcan_user_id = UnicodeAttribute()
     jobcan_password = UnicodeAttribute()
     slack_access_token = UnicodeAttribute()
-    send_punch_channel = ListAttribute(of=UnicodeAttribute)
+    send_punch_channels = ListAttribute(of=UnicodeAttribute)
     updated_dt = UTCDateTimeAttribute(default=datetime.now, null=False)
