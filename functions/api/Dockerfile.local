@@ -1,7 +1,10 @@
 
 FROM --platform=linux/amd64 python:3.12-alpine
 
-RUN apk update && apk add --no-cache build-base libffi-dev curl bash
+RUN apk update && apk add --no-cache build-base libffi-dev curl bash wget tar
+
+RUN wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-386.tgz && \
+    tar xvzf ngrok-v3-stable-linux-386.tgz -C /usr/local/bin
 
 RUN addgroup -S appgroup && adduser -S app -G appgroup && \
     echo "app:secret-password" | chpasswd

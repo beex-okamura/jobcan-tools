@@ -33,15 +33,17 @@ def slack_actions(request: SlackActionRequest, x_slack_retry_num: int = Header(0
 
     event = request.event
 
-    if event.bot_id is not None:
+    if event is None or event.bot_id is not None:
         return
 
     choice_work_type = choice_work_message(event.text)
-    work_type_name = work_message_attribute[choice_work_type]["name"]
+    work_type = work_message_attribute[choice_work_type]
 
     user_info = Users.get_user(event.user)
 
-    slack_client.send_message(event.channel, f"{work_type_name} 処理を受けつけました")
+    slack_client.send_message(
+        event.channel, f"{work_type["name"]} 処理を受けつけました"
+    )
 
     sqs_payload: ScrapingPayload = ScrapingPayload.model_validate(
         {
@@ -52,12 +54,13 @@ def slack_actions(request: SlackActionRequest, x_slack_retry_num: int = Header(0
 
     SQSClient().send_punch_clock_message(sqs_payload)
 
+    user_slack = Slack(token=user_info.slack_access_token)
+
     if user_info.send_punch_channels and len(user_info.send_punch_channels) > 0:
-        user_slack = Slack(token=user_info.slack_access_token)
         for channel in user_info.send_punch_channels:
-            user_slack.send_message(
-                channel, work_message_attribute[choice_work_type]["icon"]
-            )
+            user_slack.send_message(channel, work_type["icon"])
+
+    user_slack.change_status(work_type["name"], work_type["icon"])
 
 
 @router.post(
