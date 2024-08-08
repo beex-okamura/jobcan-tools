@@ -1,10 +1,15 @@
 from fastapi import APIRouter, Header, HTTPException
 
 from lib.secrets import get_secrets
-from lib.slack import Slack, choice_work_message, work_message_type
+from lib.slack import Slack, choice_work_message, work_message_attribute
 from lib.sqs import SQSClient
 from routers.logging import TimedRoute
-from schemas.slack import SlackActionRequest, SlackActionResponse, SlackSendMessageRequest
+from schemas.scraping_payload import ScrapingPayload
+from schemas.slack import (
+    SlackActionRequest,
+    SlackActionResponse,
+    SlackSendMessageRequest,
+)
 from services.users import Users
 
 router = APIRouter(route_class=TimedRoute)
@@ -27,14 +32,33 @@ def slack_actions(request: SlackActionRequest, x_slack_retry_num: int = Header(0
         return
 
     event = request.event
+
+    if event.bot_id is not None:
+        return
+
     choice_work_type = choice_work_message(event.text)
-    work_type_name = work_message_type[choice_work_type]
+    work_type_name = work_message_attribute[choice_work_type]["name"]
 
     user_info = Users.get_user(event.user)
 
-    slack_client.send_message(event.channel, f'{work_type_name} 処理を受けつけました')
+    slack_client.send_message(event.channel, f"{work_type_name} 処理を受けつけました")
 
-    SQSClient().send_punch_clock_message(user_info)
+    sqs_payload: ScrapingPayload = ScrapingPayload.model_validate(
+        {
+            **user_info.model_dump(),
+            "channel": event.channel,
+        }
+    )
+
+    SQSClient().send_punch_clock_message(sqs_payload)
+
+    if user_info.send_punch_channels and len(user_info.send_punch_channels) > 0:
+        user_slack = Slack(token=user_info.slack_access_token)
+        for channel in user_info.send_punch_channels:
+            user_slack.send_message(
+                channel, work_message_attribute[choice_work_type]["icon"]
+            )
+
 
 @router.post(
     "/slack/message",

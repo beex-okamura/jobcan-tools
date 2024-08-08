@@ -16,6 +16,10 @@ class TimedRoute(APIRoute):
             logger.info(
                 f"Request: {request.method} {request.url.path} {request.url.query}"
             )
+            logger.info(f"Request header: {request.headers}")
+            request_body = await request.body()
+            if request_body:
+                logger.info(f"Request body: {request_body.decode('utf-8')}")
             response: Response = await original_route_handler(request)
             duration = time.time() - before
             logger.info(f"Response: {response.status_code}")

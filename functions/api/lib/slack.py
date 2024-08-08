@@ -9,18 +9,33 @@ clock_out_match = re.compile("^(退勤|:remote-taisya:|wt|taisya).*")
 go_out_match = re.compile("^(外出|:gaisyutsu:|go|gaisyutsu).*")
 returned_match = re.compile("^(再入|:sainyu:|gr|sainyu).*")
 
-work_message_type = {
-    "clock_in": "出勤",
-    "clock_out": "退勤",
-    "go_out": "外出",
-    "returned": "再入",
+work_message_attribute = {
+    "clock_in": {
+        "name": "出勤",
+        "icon": ":remote-syusya:",
+    },
+    "clock_out": {
+        "name": "退勤",
+        "icon": ":remote-taisya:",
+    },
+    "go_out": {
+        "name": "外出",
+        "icon": ":gaisyutsu:",
+    },
+    "returned": {
+        "name": "再入",
+        "icon": ":sainyu:",
+    },
 }
 
 secrets = get_secrets()
 
+
 class Slack:
-    def __init__(self) -> None:
-        self.slack = WebClient(token=secrets.SLACK_BOT_USER_TOKEN)
+    def __init__(self, token: str | None = None) -> None:
+        self.slack = WebClient(
+            token=token if token is not None else secrets.SLACK_BOT_USER_TOKEN
+        )
 
     def send_message(self, channel: str, message: str):
         self.slack.chat_postMessage(channel=channel, text=message)
