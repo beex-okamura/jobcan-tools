@@ -10,6 +10,10 @@ import { sendSlackNotification } from "../slack/notification.ts";
 
 const dryRun = process.env.DRY_RUN === "true";
 
+interface Options {
+  isDecryptPassword?: boolean;
+}
+
 export const handler = async (event: SQSEvent) => {
   const messages = event.Records.map(
     (e) => JSON.parse(e.body) as ScrapingPayload,
@@ -25,12 +29,20 @@ export const handler = async (event: SQSEvent) => {
         jobcan_user_id: userId,
         jobcan_password: password,
         channel,
+        choice_work_type: workType,
       } = message;
 
       await sendSlackNotification(channel, "JOBCAN 勤怠連携処理を開始します");
 
       // eslint-disable-next-line no-await-in-loop
-      await workPunch(browser, userId, password);
+      const workingTime = await workPunch(browser, userId, password);
+
+      if (workType === "clock_out") {
+        await sendSlackNotification(
+          channel,
+          `本日の労働時間は${workingTime}です`,
+        );
+      }
 
       await sendSlackNotification(channel, "JOBCAN 勤怠連携処理を終了します");
     }
@@ -45,15 +57,22 @@ export const workPunch = async (
   browser: Browser,
   userId: string,
   password: string,
+  options?: Options,
 ) => {
+  const { isDecryptPassword = true } = options || {};
   const page = await browser.newPage();
 
-  const plaintext = await decryptPassword(password);
+  const plaintext = isDecryptPassword
+    ? (await decryptPassword(password)).toString()
+    : password;
 
   const jobcan = new JobCanClient(page);
-  await jobcan.login(userId, plaintext.toString());
+  await jobcan.login(userId, plaintext);
 
   if (dryRun) return;
   const res = await jobcan.workPunch();
   logger.info(res);
+
+  const workingHours = jobcan.getWorkingHours();
+  logger.info(workingHours);
 };
