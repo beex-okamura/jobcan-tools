@@ -19,7 +19,7 @@ ENV PATH="/home/app/.local/bin:${PATH}"
 
 WORKDIR /usr/src/app/functions/api
 
-RUN pip install --no-cache-dir --no-cache-dir poetry
+RUN pip install --no-cache-dir --no-cache-dir poetry poetry-plugin-export
 
 COPY poetry.lock pyproject.toml /usr/src/app/functions/api/
 
