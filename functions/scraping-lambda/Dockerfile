@@ -48,8 +48,8 @@ RUN pnpm install --prod
 RUN npx playwright install chromium
 RUN npx playwright install-deps chromium
 
-RUN curl -Lo /usr/local/bin/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/download/v1.17/aws-lambda-rie-arm64 \
-        && chmod +x /usr/local/bin/aws-lambda-rie
+RUN curl -Lo /usr/local/bin/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/download/v1.23/aws-lambda-rie-arm64 \
+    && chmod +x /usr/local/bin/aws-lambda-rie
 
 COPY ./lambda-entrypoint.sh /lambda-entrypoint.sh
 RUN chmod +x /lambda-entrypoint.sh
