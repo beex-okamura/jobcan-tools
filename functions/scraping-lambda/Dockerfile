@@ -35,6 +35,10 @@ ARG FUNCTION_TASK_ROOT
 ENV HEADLESS_MODE=true
 ENV PLAYWRIGHT_BROWSERS_PATH="/browser"
 
+# Install aws-lambda-cpp build dependencies
+RUN apt-get update && \
+    apt-get install -y cmake
+
 RUN mkdir -p /browser
 
 RUN npm install -g pnpm
