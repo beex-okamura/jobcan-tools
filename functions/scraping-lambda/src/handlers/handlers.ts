@@ -73,6 +73,6 @@ export const workPunch = async (
   const res = await jobcan.workPunch();
   logger.info(res);
 
-  const workingHours = jobcan.getWorkingHours();
+  const workingHours = await jobcan.getWorkingHours();
   logger.info(workingHours);
 };
