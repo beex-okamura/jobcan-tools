@@ -45,6 +45,8 @@ COPY --from=build-image ${FUNCTION_TASK_ROOT} ./
 
 RUN pnpm install --prod
 
+RUN cd node_modules/aws-lambda-ric && npm run update-deps && npm run preinstall && npm run postinstall
+
 RUN npx playwright install chromium
 RUN npx playwright install-deps chromium
 
