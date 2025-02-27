@@ -35,7 +35,8 @@ export const handler = async (event: SQSEvent) => {
       await sendSlackNotification(channel, "JOBCAN 勤怠連携処理を開始します");
 
       // eslint-disable-next-line no-await-in-loop
-      const workingTime = await workPunch(browser, userId, password);
+      const workingTime =
+        Math.round((await workPunch(browser, userId, password)) * 100) / 100;
 
       if (workType === "clock_out") {
         await sendSlackNotification(
