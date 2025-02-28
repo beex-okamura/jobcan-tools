@@ -35,6 +35,10 @@ ARG FUNCTION_TASK_ROOT
 ENV HEADLESS_MODE=true
 ENV PLAYWRIGHT_BROWSERS_PATH="/browser"
 
+# Install aws-lambda-cpp build dependencies
+RUN apt-get update && \
+    apt-get install -y cmake
+
 RUN mkdir -p /browser
 
 RUN npm install -g pnpm
@@ -45,11 +49,13 @@ COPY --from=build-image ${FUNCTION_TASK_ROOT} ./
 
 RUN pnpm install --prod
 
+RUN cd node_modules/aws-lambda-ric && npm run update-deps && npm run preinstall && npm run postinstall
+
 RUN npx playwright install chromium
 RUN npx playwright install-deps chromium
 
-RUN curl -Lo /usr/local/bin/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/download/v1.17/aws-lambda-rie-arm64 \
-        && chmod +x /usr/local/bin/aws-lambda-rie
+RUN curl -Lo /usr/local/bin/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/download/v1.23/aws-lambda-rie-arm64 \
+    && chmod +x /usr/local/bin/aws-lambda-rie
 
 COPY ./lambda-entrypoint.sh /lambda-entrypoint.sh
 RUN chmod +x /lambda-entrypoint.sh

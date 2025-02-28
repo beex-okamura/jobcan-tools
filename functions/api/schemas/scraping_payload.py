@@ -6,3 +6,4 @@ class ScrapingPayload(BaseModel):
     user_id: str
     jobcan_user_id: str
     jobcan_password: str
+    choice_work_type: str

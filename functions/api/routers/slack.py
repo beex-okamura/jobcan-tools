@@ -48,6 +48,7 @@ def slack_actions(request: SlackActionRequest, x_slack_retry_num: int = Header(0
     sqs_payload: ScrapingPayload = ScrapingPayload.model_validate(
         {
             **user_info.model_dump(),
+            "choice_work_type": choice_work_type,
             "channel": event.channel,
         }
     )
