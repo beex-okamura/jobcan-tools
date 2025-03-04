@@ -86,7 +86,8 @@ export class JobCanClient {
       const workingHours = await todayRow.locator("td").nth(6).innerText();
 
       if (!workingHours) {
-        throw new Error("労働時間が取得できませんでした");
+        logger.warn("労働時間が取得できませんでした");
+        return 0;
       }
 
       // 60進数から10進数に変換して返却
