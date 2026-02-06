@@ -5,5 +5,8 @@ class UserInfo(BaseModel):
     user_id: str
     jobcan_user_id: str
     jobcan_password: str
+    zac_tenant_id: str
+    zac_user_id: str
+    zac_password: str
     slack_access_token: str
     send_punch_channels: list[str] | None

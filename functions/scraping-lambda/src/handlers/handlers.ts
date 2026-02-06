@@ -7,6 +7,7 @@ import { type Browser } from "playwright";
 import { ScrapingPayload } from "../entities/jobcan.ts";
 import { decryptPassword } from "../lib/kms.ts";
 import { sendSlackNotification } from "../slack/notification.ts";
+import { ZacClient } from "../services/zac.ts";
 
 const dryRun = process.env.DRY_RUN === "true";
 
@@ -28,6 +29,9 @@ export const handler = async (event: SQSEvent) => {
       const {
         jobcan_user_id: userId,
         jobcan_password: password,
+        zac_tenant_id: tenantId,
+        zac_login_id: loginId,
+        zac_password: zacPassword,
         channel,
         choice_work_type: workType,
       } = message;
@@ -35,16 +39,16 @@ export const handler = async (event: SQSEvent) => {
       await sendSlackNotification(channel, "JOBCAN 勤怠連携処理を開始します");
 
       // eslint-disable-next-line no-await-in-loop
-      const workingTime =
-        Math.round((await workPunch(browser, userId, password)) * 100) / 100;
+      const workingTime = await workPunch(browser, userId, password);
 
       if (workType === "clock_out") {
         await sendSlackNotification(
           channel,
           `本日の労働時間は${workingTime}です`,
         );
-      }
 
+        await new ZacClient(tenantId, loginId, zacPassword).zacRegisterEvent(workingTime);
+      }
       await sendSlackNotification(channel, "JOBCAN 勤怠連携処理を終了します");
     }
   } finally {
