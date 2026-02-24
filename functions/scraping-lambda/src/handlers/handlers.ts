@@ -74,9 +74,10 @@ export const workPunch = async (
   const jobcan = new JobCanClient(page);
   await jobcan.login(userId, plaintext);
 
-  if (dryRun) return 0;
-  const res = await jobcan.workPunch();
-  logger.info(res);
+  if (dryRun === false) {
+    const res = await jobcan.workPunch();
+    logger.info(res);
+  }
 
   const workingHours = await jobcan.getWorkingHours();
   logger.info(workingHours);
