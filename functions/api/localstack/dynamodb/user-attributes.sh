@@ -14,5 +14,7 @@ awslocal dynamodb put-item \
   --item '{
     "user_id": {"S": "UGL5J91HV"},
     "jobcan_user_id": {"S": "UGL5J91HV"},
-    "jobcan_password": {"S": "password"}
+    "jobcan_password": {"S": "password"},
+    "slack_access_token": {"S": "xoxp-dummy-token"},
+    "send_punch_channels": {"L": [{"S": "C031M12GJPK"}]}
   }'
