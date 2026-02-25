@@ -17,7 +17,7 @@ class UserModel(Model):
     jobcan_user_id = UnicodeAttribute()
     jobcan_password = UnicodeAttribute()
     zac_tenant_id = UnicodeAttribute()
-    zac_login_id = UnicodeAttribute()
+    zac_user_id = UnicodeAttribute()
     zac_password = UnicodeAttribute()
     slack_access_token = UnicodeAttribute()
     send_punch_channels = ListAttribute(of=UnicodeAttribute)
