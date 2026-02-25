@@ -25,27 +25,27 @@ export const formatTime = (time: number): z.infer<typeof ZacWorkTimeSchema> => {
     switch (minute) {
         case 0:
             return {
-                hour: hour.toString(),
+                hour,
                 minute: '0',
             };
         case 15:
             return {
-                hour: hour.toString(),
+                hour,
                 minute: '15',
             };
         case 30:
             return {
-                hour: hour.toString(),
+                hour,
                 minute: '30',
             };
         case 45:
             return {
-                hour: hour.toString(),
+                hour,
                 minute: '45',
             };
         default:
             return {
-                hour: hour.toString(),
+                hour,
                 minute: '0',
             };
     }

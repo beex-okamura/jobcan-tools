@@ -23,7 +23,7 @@ export class ZacClient {
             registerDate: new Date().toISOString(),
             workInput: {
             workStartTime: {
-                hour: '9',
+                hour: 9,
                 minute: '30',
             },
             workEndTime: {
