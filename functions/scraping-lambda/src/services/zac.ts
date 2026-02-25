@@ -16,7 +16,7 @@ export class ZacClient {
         const { hour: workEndTimeHour, minute: workEndTimeMinute } = formatTime(workEndTime);
         const { hour: breakHour, minute: breakMinute } = formatTime(breakTime);
 
-        await publishZacRegisterEvent({
+        await publishZacRegisterEvent([{
             tenantId: this.tenantId,
             loginId: this.loginId,
             password: this.password,
@@ -43,6 +43,6 @@ export class ZacClient {
                 text: 'Worked project tasks.',
             }],
             },
-        })
+        }])
     }
 }
