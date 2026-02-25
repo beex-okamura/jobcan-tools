@@ -111,5 +111,25 @@ resource "aws_iam_policy" "jobcan-api-read-user-attributes-policy" {
         Resource = aws_dynamodb_table.jobcan_user_attributes.arn
       }
     ]
-  })  
+  })
+}
+
+data "aws_sns_topic" "puppeteer-zac-work-register" {
+  name = "puppeteer-zac-work-register-${var.env}"
+}
+
+resource "aws_iam_policy" "jobcan-scraping-sns-zac-register-policy" {
+  name = "${var.app_name}-${var.env}-scraping-sns-zac-register-policy"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "sns:Publish"
+        ]
+        Effect   = "Allow"
+        Resource = data.aws_sns_topic.puppeteer-zac-work-register.arn
+      }
+    ]
+  })
 }
