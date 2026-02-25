@@ -30,7 +30,7 @@ export const handler = async (event: SQSEvent) => {
         jobcan_user_id: userId,
         jobcan_password: password,
         zac_tenant_id: tenantId,
-        zac_login_id: loginId,
+        zac_user_id: loginId,
         zac_password: zacPassword,
         channel,
         choice_work_type: workType,
