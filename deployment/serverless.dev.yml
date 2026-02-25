@@ -20,4 +20,4 @@ environment:
   scraping:
     KMS_CUSTOMER_KEY_ARN: arn:aws:kms:ap-northeast-1:105785188161:key/9f99a548-b1a4-402b-8e2d-07c91d5b46eb
     KMS_CUSTOMER_ALIAS_KEY_ARN: arn:aws:kms:ap-northeast-1:105785188161:alias/jobcan-customer-key-dev
-    ZAC_REGISTER_EVENT_TOPIC_ARN: arn:aws:sns:ap-northeast-1:105785188161:puppeteer-zac-work-register-dev
+    ZAC_REGISTER_EVENT_TOPIC_ARN: arn:aws:sns:ap-northeast-1:105785188161:zac-handler-function
