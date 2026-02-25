@@ -35,7 +35,7 @@ export class ZacClient {
                 minute: breakMinute,
             },
             workDetails: [{
-                code: '93',
+                code: '53',
                 workTime: {
                 hour: workHour,
                 minute: workMinute,
