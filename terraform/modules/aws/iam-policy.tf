@@ -114,12 +114,12 @@ resource "aws_iam_policy" "jobcan-api-read-user-attributes-policy" {
   })
 }
 
-data "aws_sns_topic" "puppeteer-zac-work-register" {
-  name = "zac-handler-function"
+data "aws_sns_topic" "zac-sns-topic" {
+  name = "zac-sns-topic"
 }
 
-resource "aws_iam_policy" "jobcan-scraping-sns-zac-register-policy" {
-  name = "${var.app_name}-${var.env}-scraping-sns-zac-register-policy"
+resource "aws_iam_policy" "jobcan-scraping-zac-sns-topic-policy" {
+  name = "${var.app_name}-${var.env}-scraping-zac-sns-topic-policy"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -128,7 +128,7 @@ resource "aws_iam_policy" "jobcan-scraping-sns-zac-register-policy" {
           "sns:Publish"
         ]
         Effect   = "Allow"
-        Resource = data.aws_sns_topic.puppeteer-zac-work-register.arn
+        Resource = data.aws_sns_topic.zac-sns-topic.arn
       }
     ]
   })
