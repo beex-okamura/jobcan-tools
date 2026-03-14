@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const ZacWorkTimeSchema = z.object({
-  hour: z.number().int().min(0).max(23).transform(String),
+  hour: z.number().int().min(0).max(23),
   minute: z.enum(['0', '15', '30', '45'])
 });
 

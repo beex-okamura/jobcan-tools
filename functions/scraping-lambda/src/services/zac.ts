@@ -10,9 +10,10 @@ export class ZacClient {
     async zacRegisterEvent (workingTime: number) {
 
         const breakTime = calcBreakTime(workingTime);
-        const workEndTime = trunc15Minutes(workingTime + 8.5 - breakTime);
+        const workStartTimeValue = 9.5; // 9:30
+        const workEndTime = trunc15Minutes(workStartTimeValue + workingTime + breakTime);
 
-        const { hour: workHour, minute: workMinute } = formatTime(workingTime - breakTime);
+        const { hour: workHour, minute: workMinute } = formatTime(trunc15Minutes(workingTime));
         const { hour: workEndTimeHour, minute: workEndTimeMinute } = formatTime(workEndTime);
         const { hour: breakHour, minute: breakMinute } = formatTime(breakTime);
 
@@ -23,7 +24,7 @@ export class ZacClient {
             registerDate: new Date().toISOString(),
             workInput: {
             workStartTime: {
-                hour: '9',
+                hour: 9,
                 minute: '30',
             },
             workEndTime: {
@@ -35,7 +36,7 @@ export class ZacClient {
                 minute: breakMinute,
             },
             workDetails: [{
-                code: '93',
+                code: '53',
                 workTime: {
                 hour: workHour,
                 minute: workMinute,

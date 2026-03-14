@@ -115,7 +115,7 @@ resource "aws_iam_policy" "jobcan-api-read-user-attributes-policy" {
 }
 
 data "aws_sns_topic" "puppeteer-zac-work-register" {
-  name = "puppeteer-zac-work-register-${var.env}"
+  name = "zac-sns-topic"
 }
 
 resource "aws_iam_policy" "jobcan-scraping-sns-zac-register-policy" {
