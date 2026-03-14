@@ -1,5 +1,5 @@
 import { calcBreakTime, trunc15Minutes, formatTime } from "../lib/time.ts";
-import { publishZacRegisterEvent } from "../lib/sns.ts";
+import { sendZacRegisterEvent } from "../lib/sqs.ts";
 
 export class ZacClient {
     constructor(
@@ -17,7 +17,7 @@ export class ZacClient {
         const { hour: workEndTimeHour, minute: workEndTimeMinute } = formatTime(workEndTime);
         const { hour: breakHour, minute: breakMinute } = formatTime(breakTime);
 
-        await publishZacRegisterEvent({
+        await sendZacRegisterEvent({
             tenantId: this.tenantId,
             loginId: this.loginId,
             password: this.password,
