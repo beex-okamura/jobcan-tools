@@ -25,7 +25,7 @@ export interface ZacRegisterInput {
   workDetails: ZacWorkTimeInput[];
 }
 
-export const SnsEventSchema = z.object({
+export const SqsEventSchema = z.object({
   tenantId: z.string(),
   loginId: z.string(),
   password: z.string(),

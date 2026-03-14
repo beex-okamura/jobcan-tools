@@ -53,7 +53,7 @@ resource "aws_iam_role_policy_attachment" "jobcan-scraping-kms-lambda" {
   policy_arn = aws_iam_policy.jobcan-kms-policy.arn
 }
 
-resource "aws_iam_role_policy_attachment" "jobcan-scraping-sns-zac-register-lambda" {
+resource "aws_iam_role_policy_attachment" "jobcan-scraping-sqs-zac-register-lambda" {
   role       = aws_iam_role.jobcan-scraping-lambda.name
-  policy_arn = aws_iam_policy.jobcan-scraping-sns-zac-register-policy.arn
+  policy_arn = aws_iam_policy.jobcan-scraping-sqs-zac-register-policy.arn
 }

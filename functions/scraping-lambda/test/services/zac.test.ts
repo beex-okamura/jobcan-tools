@@ -1,22 +1,22 @@
 const jestObj = import.meta.jest as any;
 
-const mockPublishZacRegisterEvent = jestObj.fn();
-jestObj.unstable_mockModule("../../src/lib/sns.ts", () => ({
-    publishZacRegisterEvent: mockPublishZacRegisterEvent,
+const mockSendZacRegisterEvent = jestObj.fn();
+jestObj.unstable_mockModule("../../src/lib/sqs.ts", () => ({
+    sendZacRegisterEvent: mockSendZacRegisterEvent,
 }));
 
 const { ZacClient } = await import("../../src/services/zac.ts");
 
 describe('ZacClient.zacRegisterEvent', () => {
     beforeEach(() => {
-        mockPublishZacRegisterEvent.mockClear();
+        mockSendZacRegisterEvent.mockClear();
     });
 
     test('workingTime=7.91の場合、workTime=7:45, workEndTime=18:15, breakTime=1:00', async () => {
         const client = new ZacClient('tenant', 'login', 'pass');
         await client.zacRegisterEvent(7.91);
 
-        expect(mockPublishZacRegisterEvent).toHaveBeenCalledWith(
+        expect(mockSendZacRegisterEvent).toHaveBeenCalledWith(
             expect.objectContaining({
                 workInput: expect.objectContaining({
                     workStartTime: { hour: 9, minute: '30' },
@@ -34,7 +34,7 @@ describe('ZacClient.zacRegisterEvent', () => {
         const client = new ZacClient('tenant', 'login', 'pass');
         await client.zacRegisterEvent(6.5);
 
-        expect(mockPublishZacRegisterEvent).toHaveBeenCalledWith(
+        expect(mockSendZacRegisterEvent).toHaveBeenCalledWith(
             expect.objectContaining({
                 workInput: expect.objectContaining({
                     workStartTime: { hour: 9, minute: '30' },
@@ -52,7 +52,7 @@ describe('ZacClient.zacRegisterEvent', () => {
         const client = new ZacClient('tenant', 'login', 'pass');
         await client.zacRegisterEvent(5.0);
 
-        expect(mockPublishZacRegisterEvent).toHaveBeenCalledWith(
+        expect(mockSendZacRegisterEvent).toHaveBeenCalledWith(
             expect.objectContaining({
                 workInput: expect.objectContaining({
                     workStartTime: { hour: 9, minute: '30' },

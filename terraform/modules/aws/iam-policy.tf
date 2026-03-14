@@ -114,21 +114,21 @@ resource "aws_iam_policy" "jobcan-api-read-user-attributes-policy" {
   })
 }
 
-data "aws_sns_topic" "puppeteer-zac-work-register" {
-  name = "zac-sns-topic"
+data "aws_sqs_queue" "puppeteer-zac-work-register" {
+  name = "zac-sqs-queue"
 }
 
-resource "aws_iam_policy" "jobcan-scraping-sns-zac-register-policy" {
-  name = "${var.app_name}-${var.env}-scraping-sns-zac-register-policy"
+resource "aws_iam_policy" "jobcan-scraping-sqs-zac-register-policy" {
+  name = "${var.app_name}-${var.env}-scraping-sqs-zac-register-policy"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
         Action = [
-          "sns:Publish"
+          "sqs:SendMessage"
         ]
         Effect   = "Allow"
-        Resource = data.aws_sns_topic.puppeteer-zac-work-register.arn
+        Resource = data.aws_sqs_queue.puppeteer-zac-work-register.arn
       }
     ]
   })
