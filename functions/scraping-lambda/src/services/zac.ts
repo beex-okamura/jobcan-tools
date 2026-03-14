@@ -11,9 +11,9 @@ export class ZacClient {
 
         const breakTime = calcBreakTime(workingTime);
         const workStartTimeValue = 9.5; // 9:30
-        const workEndTime = trunc15Minutes(workStartTimeValue + workingTime);
+        const workEndTime = trunc15Minutes(workStartTimeValue + workingTime + breakTime);
 
-        const { hour: workHour, minute: workMinute } = formatTime(workingTime - breakTime);
+        const { hour: workHour, minute: workMinute } = formatTime(trunc15Minutes(workingTime));
         const { hour: workEndTimeHour, minute: workEndTimeMinute } = formatTime(workEndTime);
         const { hour: breakHour, minute: breakMinute } = formatTime(breakTime);
 
