@@ -9,6 +9,7 @@ export const sendZacRegisterEvent = async (event: z.infer<typeof SqsEventSchema>
     new SendMessageCommand({
       QueueUrl: process.env.ZAC_REGISTER_EVENT_QUEUE_URL,
       MessageBody: JSON.stringify(event),
+      MessageGroupId: 'zac-register',
     }),
   );
 };

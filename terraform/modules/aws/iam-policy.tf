@@ -115,7 +115,7 @@ resource "aws_iam_policy" "jobcan-api-read-user-attributes-policy" {
 }
 
 data "aws_sqs_queue" "puppeteer-zac-work-register" {
-  name = "zac-sqs-queue"
+  name = "zac-queue.fifo"
 }
 
 resource "aws_iam_policy" "jobcan-scraping-sqs-zac-register-policy" {
