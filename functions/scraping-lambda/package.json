@@ -7,7 +7,8 @@
     "build": "tsx build.ts",
     "lint": "eslint",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "execute": "node --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"ts-node/esm\", pathToFileURL(\"./\"));' src/execute.ts"
+    "execute": "node --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"ts-node/esm\", pathToFileURL(\"./\"));' src/execute.ts",
+    "send-zac-sqs": "node --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"ts-node/esm\", pathToFileURL(\"./\"));' --env-file=.env src/send-zac-sqs.ts"
   },
   "type": "module",
   "keywords": [],
