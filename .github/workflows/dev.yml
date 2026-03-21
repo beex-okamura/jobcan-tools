@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - deployment/develop
+  workflow_dispatch:
 jobs:
   create-hash:
     runs-on: ubuntu-latest
