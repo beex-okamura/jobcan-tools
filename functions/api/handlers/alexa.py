@@ -1,3 +1,5 @@
+from slack_sdk import WebClient
+
 from lib.slack import Slack, work_message_attribute
 from lib.sqs import SQSClient
 from schemas.alexa import AlexaRequest
@@ -16,6 +18,12 @@ INTENT_TO_WORK_TYPE = {
 LAUNCH_MESSAGE = "出勤、退勤、外出、再入、出社、退社のいずれかを話しかけてください"
 
 slack_client = Slack()
+
+
+def _get_slack_user_id(access_token: str) -> str:
+    client = WebClient(token=access_token)
+    response = client.auth_test()
+    return response["user_id"]
 
 
 def _build_response(speech_text: str, should_end_session: bool = True) -> dict:
@@ -56,7 +64,7 @@ def alexa_handler(event: dict, context) -> dict:
     if access_token is None:
         return _build_response("アカウントリンクを設定してください")
 
-    user_id = access_token
+    user_id = _get_slack_user_id(access_token)
     user_info = Users.get_user(user_id)
 
     if not user_info.send_punch_channels or len(user_info.send_punch_channels) == 0:

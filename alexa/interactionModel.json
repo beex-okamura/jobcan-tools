@@ -1,0 +1,76 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "ジョブカン打刻",
+      "intents": [
+        {
+          "name": "ClockInIntent",
+          "samples": [
+            "出勤",
+            "出勤して",
+            "出勤お願い",
+            "しゅっきん"
+          ]
+        },
+        {
+          "name": "ClockOutIntent",
+          "samples": [
+            "退勤",
+            "退勤して",
+            "退勤お願い",
+            "たいきん"
+          ]
+        },
+        {
+          "name": "GoOutIntent",
+          "samples": [
+            "外出",
+            "外出して",
+            "外出お願い",
+            "がいしゅつ"
+          ]
+        },
+        {
+          "name": "ReturnedIntent",
+          "samples": [
+            "再入",
+            "再入して",
+            "再入お願い",
+            "さいにゅう",
+            "戻り"
+          ]
+        },
+        {
+          "name": "GoOfficeInIntent",
+          "samples": [
+            "出社",
+            "出社して",
+            "出社お願い",
+            "しゅっしゃ"
+          ]
+        },
+        {
+          "name": "LeaveOfficeIntent",
+          "samples": [
+            "退社",
+            "退社して",
+            "退社お願い",
+            "たいしゃ"
+          ]
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        }
+      ]
+    }
+  }
+}
