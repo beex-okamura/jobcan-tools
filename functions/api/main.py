@@ -35,4 +35,12 @@ PROJECT_ROOT = os.path.realpath(
     os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 )
 
-handler = Mangum(app)
+mangum_handler = Mangum(app)
+
+
+def handler(event, context):
+    if "session" in event and "request" in event:
+        from handlers.alexa import alexa_handler
+
+        return alexa_handler(event, context)
+    return mangum_handler(event, context)

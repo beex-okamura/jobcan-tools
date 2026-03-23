@@ -61,7 +61,7 @@ export class JobCanClient {
    */
   private convertTimeToDecimal(time: string): number {
     const [hours, minutes] = time.split(":").map(Number);
-    return hours + minutes / 60;
+    return Math.floor((hours + minutes / 60) * 10) / 10;
   }
 
   async getWorkingHours(): Promise<number> {
