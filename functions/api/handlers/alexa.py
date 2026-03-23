@@ -1,3 +1,5 @@
+import logging
+
 from slack_sdk import WebClient
 
 from lib.slack import Slack, work_message_attribute
@@ -16,14 +18,18 @@ INTENT_TO_WORK_TYPE = {
 }
 
 LAUNCH_MESSAGE = "出勤、退勤、外出、再入、出社、退社のいずれかを話しかけてください"
+NOTIFICATION_CHANNEL = "C031M12GJPK"
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 slack_client = Slack()
 
 
 def _get_slack_user_id(access_token: str) -> str:
     client = WebClient(token=access_token)
-    response = client.auth_test()
-    return response["user_id"]
+    response = client.users_identity()
+    return response["user"]["id"]
 
 
 def _build_response(speech_text: str, should_end_session: bool = True) -> dict:
@@ -65,12 +71,13 @@ def alexa_handler(event: dict, context) -> dict:
         return _build_response("アカウントリンクを設定してください")
 
     user_id = _get_slack_user_id(access_token)
+    logger.info("Alexa request: intent=%s, user_id=%s", intent.name, user_id)
     user_info = Users.get_user(user_id)
 
     if not user_info.send_punch_channels or len(user_info.send_punch_channels) == 0:
         return _build_response("通知チャネルが設定されていません")
 
-    channel = user_info.send_punch_channels[0]
+    channel = NOTIFICATION_CHANNEL
     work_type = work_message_attribute[choice_work_type]
 
     slack_client.send_message(channel, f"{work_type['name']} 処理を受けつけました")
