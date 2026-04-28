@@ -64,26 +64,32 @@ export class JobCanClient {
     return Math.floor((hours + minutes / 60) * 10) / 10;
   }
 
-  async getWorkingHours(): Promise<number> {
+  async getWorkingHours(date?: string): Promise<number> {
     try {
+      const targetDate = date ? new Date(date) : new Date();
+      const year = targetDate.getFullYear();
+      const month = targetDate.getMonth() + 1;
+
       await this.page.goto("https://ssl.jobcan.jp/jbcoauth/login");
 
-      // 打刻修正ページにアクセス
-      await this.page.goto("https://ssl.jobcan.jp/employee/attendance");
+      // 対象年月の勤怠ページにアクセス
+      await this.page.goto(
+        `https://ssl.jobcan.jp/employee/attendance?list_type=normal&search_type=month&year=${year}&month=${month}`,
+      );
 
-      // 当日の日付を取得 (MM/DD形式)
-      const today = format(new Date(), "MM/dd");
+      // 対象日の日付を取得 (MM/DD形式)
+      const targetDay = format(targetDate, "MM/dd");
 
-      // 当日の行を特定
-      const todayRow = this.page.locator(`tr:has(td:has-text("${today}"))`);
-      const isVisible = await todayRow.isVisible();
+      // 対象日の行を特定
+      const targetRow = this.page.locator(`tr:has(td:has-text("${targetDay}"))`);
+      const isVisible = await targetRow.isVisible();
 
       if (!isVisible) {
-        throw new Error("当日の勤務データが見つかりませんでした");
+        throw new Error(`${targetDay}の勤務データが見つかりませんでした`);
       }
 
       // 労働時間を取得 (7番目のtd要素)
-      const workingHours = await todayRow.locator("td").nth(6).innerText();
+      const workingHours = await targetRow.locator("td").nth(6).innerText();
 
       if (!workingHours) {
         logger.warn("労働時間が取得できませんでした");
