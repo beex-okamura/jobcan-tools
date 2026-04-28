@@ -4,7 +4,7 @@ import { getBrowser } from "../lib/browser.ts";
 
 import { JobCanClient } from "../playwright/jobcan.ts";
 import { type Browser } from "playwright";
-import { ScrapingPayload } from "../entities/jobcan.ts";
+import { GetWorkingHoursPayload, ScrapingPayload } from "../entities/jobcan.ts";
 import { decryptPassword } from "../lib/kms.ts";
 import { sendSlackNotification } from "../slack/notification.ts";
 import { ZacClient } from "../services/zac.ts";
@@ -82,4 +82,30 @@ export const workPunch = async (
   const workingHours = await jobcan.getWorkingHours();
   logger.info(workingHours);
   return workingHours;
+};
+
+export const getWorkingHoursHandler = async (
+  event: GetWorkingHoursPayload,
+): Promise<number> => {
+  const { jobcan_user_id: userId, jobcan_password: password, date } = event;
+
+  logger.info("start get working hours");
+
+  const browser = await getBrowser();
+
+  try {
+    const page = await browser.newPage();
+    const plaintext = (await decryptPassword(password)).toString();
+
+    const jobcan = new JobCanClient(page);
+    await jobcan.login(userId, plaintext);
+
+    const workingHours = await jobcan.getWorkingHours(date);
+    logger.info(`working hours: ${workingHours}`);
+
+    return workingHours;
+  } finally {
+    await browser.close();
+    logger.info("end get working hours");
+  }
 };

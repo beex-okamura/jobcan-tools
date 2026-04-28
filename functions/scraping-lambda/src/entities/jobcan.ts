@@ -13,3 +13,9 @@ export interface ScrapingPayload {
   zac_password: string;
   choice_work_type: string;
 }
+
+export interface GetWorkingHoursPayload {
+  jobcan_user_id: string;
+  jobcan_password: string;
+  date?: string;
+}

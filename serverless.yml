@@ -48,3 +48,14 @@ functions:
     events:
       - sqs:
           arn: ${file(deployment/serverless.${opt:stage}.yml):deploy.sqs.punch-work-queue.arn}
+  getWorkingHours:
+    name: ${self:service}-get-working-hours-${self:provider.stage}
+    image:
+      name: jobcan-tools-scraping
+      command:
+        - dict/handlers/handlers.getWorkingHoursHandler
+      entryPoint:
+        - "/lambda-entrypoint.sh"
+    role: ${file(deployment/serverless.${opt:stage}.yml):iam-role.scraping}
+    environment: ${file(deployment/serverless.${opt:stage}.yml):environment.scraping}
+    timeout: 60
