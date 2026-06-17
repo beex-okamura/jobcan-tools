@@ -69,6 +69,11 @@ export class JobCanClient {
       const targetDate = date ? new Date(date) : new Date();
       const year = targetDate.getFullYear();
       const month = targetDate.getMonth() + 1;
+      const targetDay = format(targetDate, "MM/dd");
+
+      logger.info(
+        `get working hours target: year=${year}, month=${month}, day=${targetDay}`,
+      );
 
       await this.page.goto("https://ssl.jobcan.jp/jbcoauth/login");
 
@@ -76,9 +81,6 @@ export class JobCanClient {
       await this.page.goto(
         `https://ssl.jobcan.jp/employee/attendance?list_type=normal&search_type=month&year=${year}&month=${month}`,
       );
-
-      // 対象日の日付を取得 (MM/DD形式)
-      const targetDay = format(targetDate, "MM/dd");
 
       // 対象日の行を特定
       const targetRow = this.page.locator(`tr:has(td:has-text("${targetDay}"))`);
@@ -90,9 +92,10 @@ export class JobCanClient {
 
       // 労働時間を取得 (7番目のtd要素)
       const workingHours = await targetRow.locator("td").nth(6).innerText();
+      logger.info(`raw working hours text: "${workingHours}"`);
 
       if (!workingHours) {
-        logger.warn("労働時間が取得できませんでした");
+        logger.warn(`${targetDay}の労働時間が取得できませんでした`);
         return 0;
       }
 
