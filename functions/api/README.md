@@ -50,8 +50,14 @@
 iOS は署名のないショートカットを読み込めないので、macOS で署名してから iPhone に送ります。
 
 ```sh
-shortcuts sign --mode anyone --input shortcut/jobcan-punch.shortcut --output jobcan-punch-signed.shortcut
+shortcuts sign --mode people-who-know-me --input shortcut/jobcan-punch.shortcut --output jobcan-punch-signed.shortcut
 ```
+
+`--mode anyone` は Apple のサーバーが `NSURLErrorDomain error 500` を返して失敗することがあります。
+`people-who-know-me` で署名したファイルは、自分と連絡先に入っている人だけが読み込めます。
+
+署名で「正しい形式ではない」と出たら、まず `plutil -lint shortcut/jobcan-punch.shortcut` で
+ファイルが壊れていないか確認してください。
 
 読み込むときに Slack の user_id、トークン、API の URL を聞かれます。
 値はファイルには入らず、iPhone のショートカットにだけ保存されます。

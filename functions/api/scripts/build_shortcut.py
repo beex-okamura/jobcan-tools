@@ -2,7 +2,7 @@
 
 API の URL・Slack の user_id・トークンは埋め込まず、読み込み時に入力してもらう。
 生成したファイルは macOS で署名してから iPhone に読み込む:
-    shortcuts sign --mode anyone --input jobcan-punch.shortcut --output jobcan-punch-signed.shortcut
+    shortcuts sign --mode people-who-know-me --input jobcan-punch.shortcut --output jobcan-punch-signed.shortcut
 
 使い方:
     python scripts/build_shortcut.py [出力先]
@@ -72,7 +72,11 @@ def build() -> dict:
             WFVariableName="token",
         ),
         # 4-5: 打刻の種類を選ぶ
-        action("is.workflow.actions.list", WFItems=WORK_TYPES, UUID=list_id),
+        action(
+            "is.workflow.actions.list",
+            WFItems=[{"WFItemType": 0, "WFValue": text(w)} for w in WORK_TYPES],
+            UUID=list_id,
+        ),
         action(
             "is.workflow.actions.choosefromlist",
             WFInput=attachment(action_output(list_id, "リスト")),
@@ -123,10 +127,14 @@ def build() -> dict:
     return {
         "WFWorkflowMinimumClientVersion": 900,
         "WFWorkflowMinimumClientVersionString": "900",
-        "WFWorkflowClientVersion": "2302.0.4",
+        "WFWorkflowClientVersion": "2607.0.2",
+        "WFWorkflowHasOutputFallback": False,
+        "WFWorkflowHasShortcutInputVariables": False,
         "WFWorkflowIcon": {"WFWorkflowIconStartColor": 4292093695, "WFWorkflowIconGlyphNumber": 59511},
-        "WFWorkflowTypes": ["NCWidget", "WatchKit"],
+        "WFWorkflowTypes": [],
+        "WFQuickActionSurfaces": [],
         "WFWorkflowInputContentItemClasses": [],
+        "WFWorkflowOutputContentItemClasses": [],
         "WFWorkflowImportQuestions": import_questions,
         "WFWorkflowActions": actions,
     }
@@ -138,7 +146,7 @@ def main():
     )
     out = sys.argv[1] if len(sys.argv) > 1 else default
     with open(out, "wb") as f:
-        plistlib.dump(build(), f, fmt=plistlib.FMT_BINARY)
+        plistlib.dump(build(), f, fmt=plistlib.FMT_XML)
     print(out)
 
 
