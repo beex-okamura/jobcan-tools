@@ -2,7 +2,7 @@ import logging
 
 from slack_sdk import WebClient
 
-from lib.slack import Slack, work_message_attribute
+from lib.slack import NOTIFICATION_CHANNEL, Slack, work_message_attribute
 from lib.sqs import SQSClient
 from schemas.alexa import AlexaRequest
 from schemas.scraping_payload import ScrapingPayload
@@ -18,7 +18,6 @@ INTENT_TO_WORK_TYPE = {
 }
 
 LAUNCH_MESSAGE = "出勤、退勤、外出、再入、出社、退社のいずれかを話しかけてください"
-NOTIFICATION_CHANNEL = "C031M12GJPK"
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
