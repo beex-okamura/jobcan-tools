@@ -5,7 +5,7 @@ from pynamodb.exceptions import DoesNotExist
 
 from lib.secrets import get_secrets
 from lib.shortcut import verify_shortcut_token
-from lib.slack import work_message_attribute
+from lib.slack import NOTIFICATION_CHANNEL, work_message_attribute
 from schemas.shortcut import ShortcutPunchRequest, ShortcutPunchResponse
 from services.punch import accept_punch
 from services.users import Users
@@ -45,7 +45,6 @@ def shortcut_punch(request: ShortcutPunchRequest, authorization: str = Header(""
         "Shortcut request: work_type=%s, user_id=%s", choice_work_type, request.user_id
     )
 
-    # 処理結果はボットからユーザーへの DM に通知する
-    message = accept_punch(user_info, choice_work_type, request.user_id)
+    message = accept_punch(user_info, choice_work_type, NOTIFICATION_CHANNEL)
 
     return ShortcutPunchResponse(message=message)
