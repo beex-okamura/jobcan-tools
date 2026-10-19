@@ -42,3 +42,16 @@
 | 401 | トークンが不正 |
 | 404 | user_id が未登録 |
 | 503 | `SHORTCUT_SIGNING_SECRET` が未設定 |
+
+### ショートカットファイルを読み込む
+
+手で組み立てる代わりに `shortcut/jobcan-punch.shortcut` を使えます
+（`python scripts/build_shortcut.py` で再生成できます）。
+iOS は署名のないショートカットを読み込めないので、macOS で署名してから iPhone に送ります。
+
+```sh
+shortcuts sign --mode anyone --input shortcut/jobcan-punch.shortcut --output jobcan-punch-signed.shortcut
+```
+
+読み込むときに Slack の user_id、トークン、API の URL を聞かれます。
+値はファイルには入らず、iPhone のショートカットにだけ保存されます。
