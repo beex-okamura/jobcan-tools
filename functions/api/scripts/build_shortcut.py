@@ -1,13 +1,17 @@
 """iPhone ショートカット（jobcan-punch.shortcut）を生成する。
 
-API の URL・Slack の user_id・トークンは埋め込まず、読み込み時に入力してもらう。
+トークンは埋め込まず、読み込み時に入力してもらう。API の URL と Slack の user_id は
+--url / --user-id で埋め込める（指定しなければ読み込み時に入力してもらう）。
 生成したファイルは macOS で署名してから iPhone に読み込む:
     shortcuts sign --mode people-who-know-me --input jobcan-punch.shortcut --output jobcan-punch-signed.shortcut
 
 使い方:
-    python scripts/build_shortcut.py [出力先]
+    python scripts/build_shortcut.py                    # shortcut/jobcan-punch.shortcut（実行時に種類を選ぶ）
+    python scripts/build_shortcut.py --per-work-type \
+        --user-id U0123456789 --url https://…/dev/shortcut/punch --out-dir /tmp/out   # 出勤打刻.shortcut など
 """
 
+import argparse
 import os
 import plistlib
 import sys
@@ -52,41 +56,71 @@ def action(identifier: str, **params) -> dict:
     return {"WFWorkflowActionIdentifier": identifier, "WFWorkflowActionParameters": params}
 
 
-def build() -> dict:
+def build(work_type: str | None = None, user_id: str = "", url: str = "") -> dict:
+    """work_type を渡すとその打刻だけを行い、渡さないと実行時に種類を選ぶ。
+
+    user_id・url を渡すとファイルに埋め込み、渡さないと読み込み時に入力してもらう。
+    トークンは常に読み込み時に入力してもらう。
+    """
     user_id_id, token_id, list_id, chosen_id, response_id, message_id = (
         str(uuid.uuid4()).upper() for _ in range(6)
     )
+    actions = []
+    import_questions = []
 
-    actions = [
-        # 0-3: 読み込み時に入力してもらう値を変数に入れる
-        action("is.workflow.actions.gettext", WFTextActionText=text(""), UUID=user_id_id),
+    def ask(text_: str, parameter_key: str, default: str = ""):
+        import_questions.append(
+            {"ActionIndex": len(actions) - 1, "Category": "Parameter", "ParameterKey": parameter_key,
+             "DefaultValue": default, "Text": text_}
+        )
+
+    # 読み込み時に入力してもらう値（または埋め込んだ値）を変数に入れる
+    actions.append(action("is.workflow.actions.gettext", WFTextActionText=text(user_id), UUID=user_id_id))
+    if not user_id:
+        ask("Slack の user_id（U から始まる ID）", "WFTextActionText")
+    actions.append(
         action(
             "is.workflow.actions.setvariable",
             WFInput=attachment(action_output(user_id_id, "テキスト")),
             WFVariableName="user_id",
-        ),
-        action("is.workflow.actions.gettext", WFTextActionText=text(""), UUID=token_id),
+        )
+    )
+    actions.append(action("is.workflow.actions.gettext", WFTextActionText=text(""), UUID=token_id))
+    ask("ショートカット用トークン（Bitwarden の JOBCAN_SHORTCUT_TOKEN）", "WFTextActionText")
+    actions.append(
         action(
             "is.workflow.actions.setvariable",
             WFInput=attachment(action_output(token_id, "テキスト")),
             WFVariableName="token",
-        ),
-        # 4-5: 打刻の種類を選ぶ
-        action(
-            "is.workflow.actions.list",
-            WFItems=[{"WFItemType": 0, "WFValue": text(w)} for w in WORK_TYPES],
-            UUID=list_id,
-        ),
-        action(
-            "is.workflow.actions.choosefromlist",
-            WFInput=attachment(action_output(list_id, "リスト")),
-            WFChooseFromListActionPrompt="打刻",
-            UUID=chosen_id,
-        ),
-        # 6: API を呼ぶ
+        )
+    )
+
+    # 打刻の種類（固定か、実行時に選ぶ）
+    if work_type:
+        work_type_value = text(work_type)
+    else:
+        actions.append(
+            action(
+                "is.workflow.actions.list",
+                WFItems=[{"WFItemType": 0, "WFValue": text(w)} for w in WORK_TYPES],
+                UUID=list_id,
+            )
+        )
+        actions.append(
+            action(
+                "is.workflow.actions.choosefromlist",
+                WFInput=attachment(action_output(list_id, "リスト")),
+                WFChooseFromListActionPrompt="打刻",
+                UUID=chosen_id,
+            )
+        )
+        work_type_value = text(OBJ, {"{0, 1}": action_output(chosen_id, "選択された項目")})
+
+    # API を呼ぶ
+    actions.append(
         action(
             "is.workflow.actions.downloadurl",
-            WFURL="",
+            WFURL=url,
             WFHTTPMethod="POST",
             ShowHeaders=True,
             WFHTTPHeaders=dictionary(
@@ -96,33 +130,31 @@ def build() -> dict:
             WFJSONValues=dictionary(
                 [
                     ("user_id", text(OBJ, {"{0, 1}": variable("user_id")})),
-                    ("work_type", text(OBJ, {"{0, 1}": action_output(chosen_id, "選択された項目")})),
+                    ("work_type", work_type_value),
                 ]
             ),
             UUID=response_id,
-        ),
-        # 7-8: 結果を通知する
+        )
+    )
+    if not url:
+        ask("API の URL（…/dev/shortcut/punch）", "WFURL", "https://")
+
+    # 結果を通知する
+    actions.append(
         action(
             "is.workflow.actions.getvalueforkey",
             WFInput=attachment(action_output(response_id, "URLの内容")),
             WFDictionaryKey="message",
             UUID=message_id,
-        ),
+        )
+    )
+    actions.append(
         action(
             "is.workflow.actions.notification",
             WFNotificationActionTitle="JOBCAN",
             WFNotificationActionBody=text(OBJ, {"{0, 1}": action_output(message_id, "辞書の値")}),
-        ),
-    ]
-
-    import_questions = [
-        {"ActionIndex": 0, "Category": "Parameter", "ParameterKey": "WFTextActionText",
-         "DefaultValue": "", "Text": "Slack の user_id（U から始まる ID）"},
-        {"ActionIndex": 2, "Category": "Parameter", "ParameterKey": "WFTextActionText",
-         "DefaultValue": "", "Text": "ショートカット用トークン（Bitwarden の JOBCAN_SHORTCUT_TOKEN）"},
-        {"ActionIndex": 6, "Category": "Parameter", "ParameterKey": "WFURL",
-         "DefaultValue": "https://", "Text": "API の URL（…/dev/shortcut/punch）"},
-    ]
+        )
+    )
 
     return {
         "WFWorkflowMinimumClientVersion": 900,
@@ -140,14 +172,26 @@ def build() -> dict:
     }
 
 
+def write(path: str, workflow: dict):
+    with open(path, "wb") as f:
+        plistlib.dump(workflow, f, fmt=plistlib.FMT_XML)
+    print(path)
+
+
 def main():
-    default = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "shortcut", "jobcan-punch.shortcut"
-    )
-    out = sys.argv[1] if len(sys.argv) > 1 else default
-    with open(out, "wb") as f:
-        plistlib.dump(build(), f, fmt=plistlib.FMT_XML)
-    print(out)
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--out-dir", default=os.path.join(
+        os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "shortcut"))
+    parser.add_argument("--per-work-type", action="store_true", help="打刻の種類ごとのファイル（出勤打刻.shortcut など）も作る")
+    parser.add_argument("--user-id", default="", help="埋め込む Slack の user_id")
+    parser.add_argument("--url", default="", help="埋め込む API の URL")
+    args = parser.parse_args()
+
+    os.makedirs(args.out_dir, exist_ok=True)
+    write(os.path.join(args.out_dir, "jobcan-punch.shortcut"), build(user_id=args.user_id, url=args.url))
+    if args.per_work_type:
+        for w in WORK_TYPES:
+            write(os.path.join(args.out_dir, f"{w}打刻.shortcut"), build(w, args.user_id, args.url))
 
 
 if __name__ == "__main__":
