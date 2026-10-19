@@ -1,6 +1,6 @@
 ARG FUNCTION_TASK_ROOT="/usr/src/app"
 
-FROM node:20-bullseye AS build-image
+FROM node:20-bookworm AS build-image
 ARG FUNCTION_TASK_ROOT
 
 # Install aws-lambda-cpp build dependencies
@@ -14,7 +14,7 @@ RUN apt-get update && \
     libtool \
     libcurl4-openssl-dev
 
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10
 
 WORKDIR ${FUNCTION_TASK_ROOT}
 
@@ -29,7 +29,7 @@ RUN npm run build
 
 ##### ##### ##### #####
 
-FROM node:20-bullseye
+FROM node:20-bookworm
 ARG FUNCTION_TASK_ROOT
 
 ENV HEADLESS_MODE=true
@@ -41,7 +41,7 @@ RUN apt-get update && \
 
 RUN mkdir -p /browser
 
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10
 
 WORKDIR ${FUNCTION_TASK_ROOT}
 
