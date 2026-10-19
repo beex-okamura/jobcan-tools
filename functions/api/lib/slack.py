@@ -32,7 +32,7 @@ work_message_attribute = {
         "name": "再入",
         "icon": ":sainyu:",
     },
-    "leave_office_in_match": {
+    "leave_office_in": {
         "name": "退社",
         "icon": ":butsuritaisya:",
     },

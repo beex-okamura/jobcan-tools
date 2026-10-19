@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 
 from lib.environment import get_environment
+from routers.shortcut import router as shortcut_actions
 from routers.slack import router as slack_actions
 
 env = get_environment()
@@ -30,6 +31,7 @@ app.add_middleware(
 )
 
 app.include_router(slack_actions)
+app.include_router(shortcut_actions)
 
 PROJECT_ROOT = os.path.realpath(
     os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
