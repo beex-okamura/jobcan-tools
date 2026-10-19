@@ -53,5 +53,8 @@ iOS は署名のないショートカットを読み込めないので、macOS �
 shortcuts sign --mode anyone --input shortcut/jobcan-punch.shortcut --output jobcan-punch-signed.shortcut
 ```
 
+署名で「正しい形式ではない」と出たら、まず `plutil -lint shortcut/jobcan-punch.shortcut` で
+ファイルが壊れていないか確認してください。
+
 読み込むときに Slack の user_id、トークン、API の URL を聞かれます。
 値はファイルには入らず、iPhone のショートカットにだけ保存されます。
