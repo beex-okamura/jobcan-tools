@@ -2,7 +2,7 @@
 
 API の URL・Slack の user_id・トークンは埋め込まず、読み込み時に入力してもらう。
 生成したファイルは macOS で署名してから iPhone に読み込む:
-    shortcuts sign --mode anyone --input jobcan-punch.shortcut --output jobcan-punch-signed.shortcut
+    shortcuts sign --mode people-who-know-me --input jobcan-punch.shortcut --output jobcan-punch-signed.shortcut
 
 使い方:
     python scripts/build_shortcut.py [出力先]
