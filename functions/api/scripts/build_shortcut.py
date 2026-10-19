@@ -8,7 +8,7 @@
 使い方:
     python scripts/build_shortcut.py                    # shortcut/jobcan-punch.shortcut（実行時に種類を選ぶ）
     python scripts/build_shortcut.py --per-work-type \
-        --user-id U0123456789 --url https://…/dev/shortcut/punch --out-dir /tmp/out   # 出勤打刻.shortcut など
+        --user-id U0123456789 --url https://…/dev/shortcut/punch --out-dir /tmp/out   # 出勤.shortcut など
 """
 
 import argparse
@@ -182,7 +182,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--out-dir", default=os.path.join(
         os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "shortcut"))
-    parser.add_argument("--per-work-type", action="store_true", help="打刻の種類ごとのファイル（出勤打刻.shortcut など）も作る")
+    parser.add_argument("--per-work-type", action="store_true", help="打刻の種類ごとのファイル（出勤.shortcut など）も作る")
     parser.add_argument("--user-id", default="", help="埋め込む Slack の user_id")
     parser.add_argument("--url", default="", help="埋め込む API の URL")
     args = parser.parse_args()
@@ -191,7 +191,7 @@ def main():
     write(os.path.join(args.out_dir, "jobcan-punch.shortcut"), build(user_id=args.user_id, url=args.url))
     if args.per_work_type:
         for w in WORK_TYPES:
-            write(os.path.join(args.out_dir, f"{w}打刻.shortcut"), build(w, args.user_id, args.url))
+            write(os.path.join(args.out_dir, f"{w}.shortcut"), build(w, args.user_id, args.url))
 
 
 if __name__ == "__main__":
