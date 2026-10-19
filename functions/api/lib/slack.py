@@ -6,7 +6,7 @@ from lib.secrets import get_secrets
 
 clock_in_match = re.compile("^(出勤|:remote-syusya:|ws|syukin).*")
 go_office_in_match = re.compile("^(出社|:butsurishussha:|syusya).*")
-clock_out_match = re.compile("^(退勤|:remote-taisya:|wt|taisya).*")
+clock_out_match = re.compile("^(退勤|:remote-taisya:|wt|taikin).*")
 go_out_match = re.compile("^(外出|:gaisyutsu:|go|gaisyutsu).*")
 returned_match = re.compile("^(再入|:sainyu:|gr|sainyu).*")
 leave_office_in_match = re.compile("^(退社|:butsuritaisya:|taisya).*")
