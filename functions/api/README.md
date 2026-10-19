@@ -61,3 +61,16 @@ shortcuts sign --mode people-who-know-me --input shortcut/jobcan-punch.shortcut 
 
 読み込むときに Slack の user_id、トークン、API の URL を聞かれます。
 値はファイルには入らず、iPhone のショートカットにだけ保存されます。
+
+### 打刻の種類ごとのショートカットを作る
+
+「Hey Siri、出勤」の一言で打刻できるよう、種類ごとのファイルも作れます。
+URL と user_id を埋め込むと、読み込み時に聞かれるのはトークンだけになります。
+
+```sh
+python scripts/build_shortcut.py --per-work-type --user-id U0123456789 \
+  --url https://<API Gateway のエンドポイント>/dev/shortcut/punch --out-dir /tmp/shortcuts
+cd /tmp/shortcuts && mkdir -p signed && for f in *.shortcut; do
+  shortcuts sign --mode people-who-know-me --input "$f" --output "signed/$f"
+done
+```
