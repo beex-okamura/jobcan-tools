@@ -7,7 +7,7 @@ export class ZacClient {
         private readonly loginId: string,
         private readonly password: string,
     ) {}
-    async zacRegisterEvent (workingTime: number) {
+    async zacRegisterEvent (workingTime: number, notifyChannel?: string) {
 
         const breakTime = calcBreakTime(workingTime);
         const workStartTimeValue = 9.5; // 9:30
@@ -22,6 +22,7 @@ export class ZacClient {
             loginId: this.loginId,
             password: this.password,
             registerDate: new Date().toISOString(),
+            notifyChannel,
             workInput: {
             workStartTime: {
                 hour: 9,
