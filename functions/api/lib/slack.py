@@ -11,9 +11,6 @@ go_out_match = re.compile("^(外出|:gaisyutsu:|go|gaisyutsu).*")
 returned_match = re.compile("^(再入|:sainyu:|gr|sainyu).*")
 leave_office_in_match = re.compile("^(退社|:butsuritaisya:|taisya).*")
 
-# Alexa・ショートカットからの打刻の通知先
-NOTIFICATION_CHANNEL = "C031M12GJPK"
-
 work_message_attribute = {
     "clock_in": {
         "name": "出勤",

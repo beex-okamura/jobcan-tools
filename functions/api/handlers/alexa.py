@@ -2,10 +2,9 @@ import logging
 
 from slack_sdk import WebClient
 
-from lib.slack import NOTIFICATION_CHANNEL, Slack, work_message_attribute
-from lib.sqs import SQSClient
+from lib.slack import work_message_attribute
 from schemas.alexa import AlexaRequest
-from schemas.scraping_payload import ScrapingPayload
+from services.punch import accept_punch
 from services.users import Users
 
 INTENT_TO_WORK_TYPE = {
@@ -21,8 +20,6 @@ LAUNCH_MESSAGE = "出勤、退勤、外出、再入、出社、退社のいず�
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
-slack_client = Slack()
 
 
 def _get_slack_user_id(access_token: str) -> str:
@@ -76,25 +73,9 @@ def alexa_handler(event: dict, context) -> dict:
     if not user_info.send_punch_channels or len(user_info.send_punch_channels) == 0:
         return _build_response("通知チャネルが設定されていません")
 
-    channel = NOTIFICATION_CHANNEL
     work_type = work_message_attribute[choice_work_type]
 
-    slack_client.send_message(channel, f"{work_type['name']} 処理を受けつけました")
-
-    sqs_payload = ScrapingPayload.model_validate(
-        {
-            **user_info.model_dump(),
-            "choice_work_type": choice_work_type,
-            "channel": channel,
-        }
-    )
-    SQSClient().send_punch_clock_message(sqs_payload)
-
-    user_slack = Slack(token=user_info.slack_access_token)
-
-    for ch in user_info.send_punch_channels:
-        user_slack.send_message(ch, work_type["icon"])
-
-    user_slack.change_status(work_type["name"], work_type["icon"])
+    # 処理結果はボットからユーザーへの DM に通知する
+    accept_punch(user_info, choice_work_type, user_id)
 
     return _build_response(f"{work_type['name']}処理を受けつけました")
