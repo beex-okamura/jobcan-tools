@@ -30,6 +30,8 @@ export const SqsEventSchema = z.object({
   loginId: z.string(),
   password: z.string(),
   registerDate: z.string(),
+  // 登録結果の通知先（Slack のユーザー ID を渡すとボットからの DM になる）
+  notifyChannel: z.string().optional(),
   workInput: z.object({
     workStartTime: ZacWorkTimeSchema,
     workEndTime: ZacWorkTimeSchema,

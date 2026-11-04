@@ -1,15 +1,14 @@
 from fastapi import APIRouter, Header, HTTPException
 
 from lib.secrets import get_secrets
-from lib.slack import Slack, choice_work_message, work_message_attribute
-from lib.sqs import SQSClient
+from lib.slack import Slack, choice_work_message
 from routers.logging import TimedRoute
-from schemas.scraping_payload import ScrapingPayload
 from schemas.slack import (
     SlackActionRequest,
     SlackActionResponse,
     SlackSendMessageRequest,
 )
+from services.punch import accept_punch
 from services.users import Users
 
 router = APIRouter(route_class=TimedRoute)
@@ -37,31 +36,11 @@ def slack_actions(request: SlackActionRequest, x_slack_retry_num: int = Header(0
         return
 
     choice_work_type = choice_work_message(event.text)
-    work_type = work_message_attribute[choice_work_type]
 
     user_info = Users.get_user(event.user)
 
-    slack_client.send_message(
-        event.channel, f"{work_type["name"]} 処理を受けつけました"
-    )
-
-    sqs_payload: ScrapingPayload = ScrapingPayload.model_validate(
-        {
-            **user_info.model_dump(),
-            "choice_work_type": choice_work_type,
-            "channel": event.channel,
-        }
-    )
-
-    SQSClient().send_punch_clock_message(sqs_payload)
-
-    user_slack = Slack(token=user_info.slack_access_token)
-
-    if user_info.send_punch_channels and len(user_info.send_punch_channels) > 0:
-        for channel in user_info.send_punch_channels:
-            user_slack.send_message(channel, work_type["icon"])
-
-    user_slack.change_status(work_type["name"], work_type["icon"])
+    # 処理結果は打刻したチャンネルではなく、ボットからユーザーへの DM に通知する
+    accept_punch(user_info, choice_work_type, event.user)
 
 
 @router.post(

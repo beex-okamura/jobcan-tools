@@ -3,7 +3,7 @@
 ## iPhone ショートカットから打刻する
 
 `POST /shortcut/punch` で、Slack と同じ打刻処理（SQS → JOBCAN 打刻、Slack ステータス更新、
-`send_punch_channels` への投稿）を受けつけます。処理結果は Alexa と同じ通知チャンネルに届きます。
+`send_punch_channels` への投稿）を受けつけます。処理結果はボットからの DM（Slack アプリの「メッセージ」タブ）に届きます。
 
 ### 準備（初回のみ）
 
